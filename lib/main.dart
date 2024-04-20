@@ -4,12 +4,14 @@ import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:go_router/go_router.dart';
 import 'package:twitch_api/twitch_api.dart';
 import 'package:window_manager/window_manager.dart';
+import 'package:zyron/src/rust/frb_generated.dart';
 import 'package:zyron/src/utils.dart';
 import 'package:zyron/src/variables.dart';
 import 'package:zyron/views/skeleton.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
+  await RustLib.init();
 
   await dotenv.load();
   twitchClientId = dotenv.env['TWITCH_CLIENT_ID']!;
