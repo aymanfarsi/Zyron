@@ -1,4 +1,5 @@
 import 'package:fluent_ui/fluent_ui.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:go_router/go_router.dart';
 import 'package:window_manager/window_manager.dart';
 import 'package:zyron/src/variables.dart';
@@ -6,6 +7,10 @@ import 'package:zyron/views/skeleton.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
+
+  await dotenv.load();
+  twitchClientId = dotenv.env['TWITCH_CLIENT_ID']!;
+  twitchClientSecret = dotenv.env['TWITCH_CLIENT_SECRET']!;
 
   await windowManager.ensureInitialized();
 
