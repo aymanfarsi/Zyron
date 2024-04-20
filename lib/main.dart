@@ -36,7 +36,7 @@ Future<void> main() async {
         TwitchToken.fromUrl(uri.toString()),
       );
     } catch (e) {
-      debugPrint('Error: $e');
+      debugPrint('Register app links Error: $e');
     }
   });
 
@@ -50,47 +50,48 @@ Future<void> main() async {
 
   // ! Initialize the system tray
   await trayManager.setIcon(
-    Platform.isWindows ? 'assets/zyron_icon.ico' : 'assets/zyron_icon.png',
+    // Platform.isWindows ? 'assets/zyron_icon.ico' : 'assets/zyron_icon.png',
+    'assets/zyron_icon.ico',
+    iconPosition: TrayIconPositon.left,
   );
-  await trayManager.setTitle('Zyron');
   await trayManager.setToolTip('Zyron System Tray');
   Menu menu = Menu(
     items: [
       MenuItem(
-        key: 'show_window',
-        label: 'Show Window',
+        key: 'app_name',
+        label: 'Zyron',
+        disabled: true,
       ),
       MenuItem.separator(),
       MenuItem(
-        key: 'exit_app',
-        label: 'Exit App',
+        key: 'exit',
+        label: 'Exit',
+        onClick: (MenuItem item) async {
+          await windowManager.close();
+        },
       ),
     ],
   );
   await trayManager.setContextMenu(menu);
 
   // ! Initialize the Windows Taskbar
-  await WindowsTaskbar.setThumbnailToolbar(
-    [
-      ThumbnailToolbarButton(
-        ThumbnailToolbarAssetIcon('assets/camera.ico'),
-        'Turn On Camera',
-        () {},
-      ),
-      ThumbnailToolbarButton(
-        ThumbnailToolbarAssetIcon('assets/microphone.ico'),
-        'Mute',
-        () {},
-        mode: ThumbnailToolbarButtonMode.disabled |
-            ThumbnailToolbarButtonMode.dismissionClick,
-      ),
-      ThumbnailToolbarButton(
-        ThumbnailToolbarAssetIcon('assets/end_call.ico'),
-        'Disconnect',
-        () {},
-      ),
-    ],
-  );
+  try {
+    await WindowsTaskbar.resetThumbnailToolbar();
+    await WindowsTaskbar.setThumbnailToolbar(
+      [
+        ThumbnailToolbarButton(
+          ThumbnailToolbarAssetIcon('assets/zyron_icon.ico'),
+          'App Icon',
+          () async {
+            debugPrint('ThumbnailToolbarButton clicked');
+          },
+          mode: ThumbnailToolbarButtonMode.noBackground,
+        ),
+      ],
+    );
+  } catch (e) {
+    debugPrint('Initialize the Windows Taskbar Error: $e');
+  }
 
   // ! Initialize the window manager
   await windowManager.ensureInitialized();

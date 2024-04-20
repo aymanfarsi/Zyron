@@ -2,20 +2,20 @@ import 'package:fluent_ui/fluent_ui.dart';
 import 'package:go_router/go_router.dart';
 import 'package:tray_manager/tray_manager.dart';
 import 'package:window_manager/window_manager.dart';
+import 'package:zyron/views/skeleton.dart';
 
-class SkeletonApp extends StatefulWidget {
-  const SkeletonApp({super.key});
+class AppFrame extends StatefulWidget {
+  const AppFrame({super.key});
 
   @override
-  SkeletonAppState createState() => SkeletonAppState();
+  AppFrameState createState() => AppFrameState();
 }
 
-class SkeletonAppState extends State<SkeletonApp>
-    with WindowListener, TrayListener {
+class AppFrameState extends State<AppFrame> with WindowListener, TrayListener {
   @override
   void initState() {
-    trayManager.addListener(this);
     super.initState();
+    trayManager.addListener(this);
     windowManager.addListener(this);
   }
 
@@ -27,21 +27,27 @@ class SkeletonAppState extends State<SkeletonApp>
   }
 
   @override
-  Widget build(BuildContext context) => const SkeletonApp();
+  Widget build(BuildContext context) {
+    return const AppSkeleton();
+  }
 
-  /**
-   * ! Tray Manager
-   */
+  // ************************************************************
+  // ! Tray Manager
+  // ************************************************************
 
   @override
   void onTrayIconMouseDown() async {
-    // do something, for example pop up the menu
     await trayManager.popUpContextMenu();
   }
 
   @override
-  void onTrayIconRightMouseDown() {
+  void onTrayIconMouseUp() async {
     // do something
+  }
+
+  @override
+  void onTrayIconRightMouseDown() async {
+    await trayManager.popUpContextMenu();
   }
 
   @override
@@ -51,17 +57,12 @@ class SkeletonAppState extends State<SkeletonApp>
 
   @override
   void onTrayMenuItemClick(MenuItem menuItem) async {
-    if (menuItem.key == 'show_window') {
-      await windowManager.show();
-      await windowManager.focus();
-    } else if (menuItem.key == 'exit_app') {
-      await windowManager.close();
-    }
+    // do something
   }
 
-  /**
-   * ! Window Manager
-   */
+  // ************************************************************
+  // ! Window Manager
+  // ************************************************************
 
   @override
   void onWindowEvent(String eventName) {
