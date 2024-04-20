@@ -27,6 +27,7 @@ class _MainPageState extends State<MainPage> {
 
   @override
   Widget build(BuildContext context) {
+    debugPrint('Building MainPage');
     return Scaffold(
       body: LayoutBuilder(
         builder: (context, constraints) {
@@ -170,7 +171,12 @@ class _MainPageState extends State<MainPage> {
                                           ? Colors.white
                                           : Colors.black,
                                     ),
-                                    onPressed: () {},
+                                    onPressed: () {
+                                      setState(() {
+                                        pageIndex =
+                                            AppPages.sidebarItems.indexOf(page);
+                                      });
+                                    },
                                   ),
                                 ),
                             ],
@@ -189,8 +195,16 @@ class _MainPageState extends State<MainPage> {
                             ),
                             borderRadius: BorderRadius.circular(12.0),
                           ),
-                          child: const Center(
-                            child: Text('Main Content'),
+                          child: IndexedStack(
+                            index: pageIndex,
+                            children: <Widget>[
+                              for (AppPages page in AppPages.sidebarItems)
+                                SizedBox(
+                                  height: constraints.maxHeight - 50.0,
+                                  width: MediaQuery.of(context).size.width - 77,
+                                  child: page.widget,
+                                ),
+                            ],
                           ),
                         ),
                       ],

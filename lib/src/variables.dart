@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:go_router/go_router.dart';
 import 'package:zyron/views/main_page.dart';
+import 'package:zyron/views/twitch_view.dart';
+import 'package:zyron/views/youtube_view.dart';
 
 // ! Pages enums
 enum AppPages {
@@ -22,6 +24,15 @@ enum AppPages {
       AppPages.youtube,
       AppPages.twitch,
     ];
+  }
+
+  Widget get widget {
+    switch (this) {
+      case AppPages.youtube:
+        return const YouTubeView();
+      case AppPages.twitch:
+        return const TwitchView();
+    }
   }
 }
 
