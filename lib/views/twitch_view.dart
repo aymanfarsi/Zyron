@@ -34,7 +34,25 @@ class _TwitchViewState extends State<TwitchView> {
                     borderRadius: BorderRadius.all(Radius.circular(8.0)),
                   ),
                   child: Tooltip(
-                    message: 'Twitch Channel',
+                    richMessage: TextSpan(
+                      children: [
+                        TextSpan(
+                          text: 'Twitch Channel ',
+                          style: TextStyle(
+                            color: Colors.black.withOpacity(0.8),
+                            fontSize: 14.0,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                        TextSpan(
+                          text: '${index + 1}',
+                          style: const TextStyle(
+                            color: Colors.black,
+                            fontSize: 14.0,
+                          ),
+                        ),
+                      ],
+                    ),
                     waitDuration: const Duration(milliseconds: 1000),
                     preferBelow: true,
                     child: ListTile(
