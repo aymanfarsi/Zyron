@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:go_router/go_router.dart';
+import 'package:zyron/main.dart';
 import 'package:zyron/views/main_page.dart';
 import 'package:zyron/views/twitch_view.dart';
 import 'package:zyron/views/youtube_view.dart';
@@ -47,7 +48,7 @@ final router = GoRouter(
       path: '/',
       pageBuilder: (context, state) => CustomTransitionPage(
         key: state.pageKey,
-        child: const MainPage(),
+        child: const SkeletonApp(),
         transitionsBuilder: (context, animation, secondaryAnimation, child) {
           return FadeTransition(
             opacity: CurveTween(curve: Curves.easeInOutCirc).animate(animation),

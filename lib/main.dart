@@ -1,7 +1,8 @@
-import 'package:flutter/material.dart';
+import 'package:fluent_ui/fluent_ui.dart';
 import 'package:go_router/go_router.dart';
 import 'package:window_manager/window_manager.dart';
-import 'package:zyron/app.dart';
+import 'package:zyron/src/variables.dart';
+import 'package:zyron/views/main_page.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -18,14 +19,40 @@ Future<void> main() async {
   );
   windowManager.waitUntilReadyToShow(windowOptions, () async {
     await windowManager.setAlwaysOnTop(false);
-    // await windowManager.setAsFrameless();
     await windowManager.setPreventClose(true);
     await windowManager.show();
     await windowManager.focus();
   });
 
   runApp(
-    const SkeletonApp(),
+    FluentApp.router(
+      title: 'Zyron',
+      debugShowCheckedModeBanner: false,
+      theme: FluentThemeData.light().copyWith(
+        animationCurve: Curves.easeInOutCirc,
+      ),
+      darkTheme: FluentThemeData.dark().copyWith(
+        animationCurve: Curves.easeInOutCirc,
+      ),
+      themeMode: ThemeMode.dark,
+      routerConfig: router,
+      localizationsDelegates: const [
+        DefaultMaterialLocalizations.delegate,
+        DefaultWidgetsLocalizations.delegate,
+      ],
+      locale: const Locale('en', 'US'),
+      supportedLocales: const [Locale('en', 'US')],
+      onGenerateTitle: (context) => 'Zyron',
+      scrollBehavior: const FluentScrollBehavior(),
+      actions: <Type, Action<Intent>>{
+        ...WidgetsApp.defaultActions,
+        ActivateAction: CallbackAction(
+          onInvoke: (Intent intent) {
+            return null;
+          },
+        ),
+      },
+    ),
   );
 }
 
@@ -51,7 +78,7 @@ class SkeletonAppState extends State<SkeletonApp> with WindowListener {
 
   @override
   Widget build(BuildContext context) {
-    return const MainApp();
+    return const MainPage();
   }
 
   @override
@@ -64,20 +91,23 @@ class SkeletonAppState extends State<SkeletonApp> with WindowListener {
     await showDialog(
       context: context,
       builder: (context) {
-        return AlertDialog(
+        return ContentDialog(
           title: const Text('Close Window'),
           content: const Text('Are you sure you want to close the window?'),
           actions: <Widget>[
-            TextButton(
+            Button(
               onPressed: () {
                 context.pop();
               },
               child: const Text('Cancel'),
             ),
-            TextButton(
+            Button(
               onPressed: () async {
                 await windowManager.close();
               },
+              style: ButtonStyle(
+                backgroundColor: ButtonState.all(Colors.red),
+              ),
               child: const Text('Close'),
             ),
           ],
