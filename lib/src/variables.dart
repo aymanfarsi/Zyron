@@ -2,13 +2,19 @@ import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:go_router/go_router.dart';
 import 'package:zyron/main.dart';
+import 'package:zyron/views/anime_view.dart';
+import 'package:zyron/views/help_view.dart';
+import 'package:zyron/views/settings_view.dart';
 import 'package:zyron/views/twitch_view.dart';
 import 'package:zyron/views/youtube_view.dart';
 
 // ! Pages enums
 enum AppPages {
   youtube,
-  twitch;
+  twitch,
+  anime,
+  settings,
+  help;
 
   IconData get icon {
     switch (this) {
@@ -16,6 +22,12 @@ enum AppPages {
         return FontAwesomeIcons.youtube;
       case AppPages.twitch:
         return FontAwesomeIcons.twitch;
+      case AppPages.anime:
+        return FontAwesomeIcons.dragon;
+      case AppPages.settings:
+        return FontAwesomeIcons.gear;
+      case AppPages.help:
+        return FontAwesomeIcons.circleQuestion;
     }
   }
 
@@ -23,6 +35,14 @@ enum AppPages {
     return [
       AppPages.youtube,
       AppPages.twitch,
+      AppPages.anime,
+    ];
+  }
+
+  static List<AppPages> get footerItems {
+    return [
+      AppPages.settings,
+      AppPages.help,
     ];
   }
 
@@ -32,6 +52,12 @@ enum AppPages {
         return const YouTubeView();
       case AppPages.twitch:
         return const TwitchView();
+      case AppPages.anime:
+        return const AnimeView();
+      case AppPages.settings:
+        return const SettingsView();
+      case AppPages.help:
+        return const HelpView();
     }
   }
 }

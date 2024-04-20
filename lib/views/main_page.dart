@@ -14,8 +14,10 @@ class MainPage extends StatefulWidget {
 }
 
 class _MainPageState extends State<MainPage> {
+  bool isAlwaysOnTop = false;
   int pageIndex = 0;
-  final contextController = FlyoutController();
+
+  final menuController = FlyoutController();
   final contextAttachKey = GlobalKey();
 
   @override
@@ -61,13 +63,10 @@ class _MainPageState extends State<MainPage> {
                           padding: const EdgeInsets.all(9.0),
                           child: GestureDetector(
                             onTap: () async {
-                              if (await windowManager.isAlwaysOnTop()) {
-                                await windowManager.setAlwaysOnTop(false);
-                              } else {
-                                await windowManager.setAlwaysOnTop(true);
-                              }
-                              debugPrint(
-                                  'Always on top is set to ${await windowManager.isAlwaysOnTop()}');
+                              await windowManager.setAlwaysOnTop(
+                                  !await windowManager.isAlwaysOnTop());
+                              isAlwaysOnTop =
+                                  await windowManager.isAlwaysOnTop();
                             },
                             child: Container(
                               height: 32.0,
@@ -93,81 +92,81 @@ class _MainPageState extends State<MainPage> {
                                   ),
                                 ),
                               ),
-                              GestureDetector(
-                                onDoubleTap: () async {
-                                  if (await windowManager.isMaximized()) {
-                                    await windowManager.restore();
-                                  } else {
-                                    await windowManager.maximize();
-                                  }
-                                },
-                                onPanStart: (details) async {
-                                  await windowManager.startDragging();
-                                },
-                                onSecondaryTapUp: (d) {
-                                  // This calculates the position of the flyout according to the parent navigator
-                                  final targetContext =
-                                      contextAttachKey.currentContext;
-                                  if (targetContext == null) return;
-                                  final box = targetContext.findRenderObject()
-                                      as RenderBox;
-                                  final position = box.localToGlobal(
-                                    d.localPosition,
-                                    ancestor: Navigator.of(context)
-                                        .context
-                                        .findRenderObject(),
-                                  );
+                              FlyoutTarget(
+                                controller: menuController,
+                                child: GestureDetector(
+                                  // ! Double tap to maximize
+                                  onDoubleTap: () async {
+                                    if (await windowManager.isMaximized()) {
+                                      await windowManager.restore();
+                                    } else {
+                                      await windowManager.maximize();
+                                    }
+                                  },
+                                  // ! Drag to move
+                                  onPanStart: (details) async {
+                                    await windowManager.startDragging();
+                                  },
+                                  // ! Titlebar context menu
+                                  onSecondaryTapUp: (details) {
+                                    const size = 100.0;
 
-                                  contextController.showFlyout(
-                                    barrierColor: Colors.black.withOpacity(0.1),
-                                    position: position,
-                                    builder: (context) {
-                                      return FlyoutContent(
-                                        child: SizedBox(
-                                          width: 130.0,
-                                          child: CommandBar(
-                                            primaryItems: [
-                                              CommandBarButton(
-                                                icon: const Icon(
-                                                    FluentIcons.add_favorite),
-                                                label: const Text('Favorite'),
-                                                onPressed: () {},
-                                              ),
-                                              CommandBarButton(
-                                                icon: const Icon(
-                                                    FluentIcons.copy),
-                                                label: const Text('Copy'),
-                                                onPressed: () {},
-                                              ),
-                                              CommandBarButton(
-                                                icon: const Icon(
-                                                    FluentIcons.share),
-                                                label: const Text('Share'),
-                                                onPressed: () {},
-                                              ),
-                                              CommandBarButton(
-                                                icon: const Icon(
-                                                    FluentIcons.save),
-                                                label: const Text('Save'),
-                                                onPressed: () {},
-                                              ),
-                                              CommandBarButton(
-                                                icon: const Icon(
-                                                    FluentIcons.delete),
-                                                label: const Text('Delete'),
-                                                onPressed: () {},
-                                              ),
-                                            ],
+                                    final targetContext =
+                                        contextAttachKey.currentContext;
+                                    if (targetContext == null) return;
+                                    final box = targetContext.findRenderObject()
+                                        as RenderBox;
+                                    final position = box.localToGlobal(
+                                      details.localPosition,
+                                      ancestor: Navigator.of(context)
+                                          .context
+                                          .findRenderObject(),
+                                    );
+                                    final centeredPosition = Offset(
+                                        position.dx - (size / 2), position.dy);
+
+                                    menuController.showFlyout(
+                                      barrierColor:
+                                          Colors.black.withOpacity(0.1),
+                                      barrierDismissible: true,
+                                      dismissOnPointerMoveAway: false,
+                                      dismissWithEsc: true,
+                                      position: centeredPosition,
+                                      builder: (context) {
+                                        return MenuFlyout(
+                                          shape: const RoundedRectangleBorder(
+                                            borderRadius: BorderRadius.all(
+                                              Radius.circular(9.0),
+                                            ),
                                           ),
-                                        ),
-                                      );
-                                    },
-                                  );
-                                },
-                                child: Container(
-                                  height: 50.0,
-                                  width: constraints.maxWidth - 190.0,
-                                  color: Colors.transparent,
+                                          items: [
+                                            MenuFlyoutItem(
+                                              text: Text(
+                                                '${isAlwaysOnTop ? 'Disable' : 'Enable'} Always on Top',
+                                              ),
+                                              onPressed: () async {
+                                                await windowManager
+                                                    .setAlwaysOnTop(
+                                                        !isAlwaysOnTop);
+                                                isAlwaysOnTop =
+                                                    await windowManager
+                                                        .isAlwaysOnTop();
+                                              },
+                                            ),
+                                          ],
+                                        );
+                                      },
+                                    );
+                                  },
+                                  child: FlyoutTarget(
+                                    key: contextAttachKey,
+                                    controller: menuController,
+                                    child: Container(
+                                      height: 50.0,
+                                      width: constraints.maxWidth - 190.0,
+                                      color: Colors.transparent,
+                                    ),
+                                  ),
                                 ),
                               ),
                             ],
@@ -198,7 +197,9 @@ class _MainPageState extends State<MainPage> {
                       ],
                     ),
                   ),
+
                   const Gap(9.0),
+
                   // ! Sidebar and main content
                   SizedBox(
                     height: constraints.maxHeight - 77.0,
@@ -227,14 +228,7 @@ class _MainPageState extends State<MainPage> {
                                   height: 50.0,
                                   width: 50.0,
                                   child: AppIconButton(
-                                    icon: FaIcon(
-                                      page.icon,
-                                      color:
-                                          FluentTheme.of(context).brightness ==
-                                                  Brightness.dark
-                                              ? Colors.white
-                                              : Colors.black,
-                                    ),
+                                    icon: FaIcon(page.icon),
                                     onPressed: () {
                                       setState(() {
                                         pageIndex =
@@ -243,10 +237,29 @@ class _MainPageState extends State<MainPage> {
                                     },
                                   ),
                                 ),
+                              const Spacer(),
+                              // ! Sidebar footer
+                              for (AppPages page in AppPages.footerItems)
+                                SizedBox(
+                                  height: 50.0,
+                                  width: 50.0,
+                                  child: AppIconButton(
+                                    icon: FaIcon(page.icon),
+                                    onPressed: () {
+                                      setState(() {
+                                        pageIndex =
+                                            AppPages.footerItems.indexOf(page) +
+                                                3;
+                                      });
+                                    },
+                                  ),
+                                ),
                             ],
                           ),
                         ),
+
                         const Gap(9.0),
+
                         // ! Main content
                         Container(
                           height: constraints.maxHeight - 50.0,
@@ -262,7 +275,7 @@ class _MainPageState extends State<MainPage> {
                           child: IndexedStack(
                             index: pageIndex,
                             children: <Widget>[
-                              for (AppPages page in AppPages.sidebarItems)
+                              for (AppPages page in AppPages.values)
                                 SizedBox(
                                   height: constraints.maxHeight - 50.0,
                                   width: MediaQuery.of(context).size.width - 77,
