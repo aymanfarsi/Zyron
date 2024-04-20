@@ -17,3 +17,11 @@ class AppIconButton extends StatelessWidget {
         onPressed: onPressed);
   }
 }
+
+final boxDecoration = BoxDecoration(
+  border: Border.all(
+    color: Colors.white,
+    width: 0.3,
+  ),
+  borderRadius: BorderRadius.circular(12.0),
+);

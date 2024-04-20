@@ -49,13 +49,7 @@ class _MainPageState extends State<MainPage> {
                   Container(
                     height: 50.0,
                     width: constraints.maxWidth,
-                    decoration: BoxDecoration(
-                      border: Border.all(
-                        color: Colors.white,
-                        width: 0.3,
-                      ),
-                      borderRadius: BorderRadius.circular(9.0),
-                    ),
+                    decoration: boxDecoration,
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.start,
                       crossAxisAlignment: CrossAxisAlignment.center,
@@ -235,13 +229,7 @@ class _MainPageState extends State<MainPage> {
                         Container(
                           height: constraints.maxHeight - 50.0,
                           width: 50.0,
-                          decoration: BoxDecoration(
-                            border: Border.all(
-                              color: Colors.white,
-                              width: 0.3,
-                            ),
-                            borderRadius: BorderRadius.circular(12.0),
-                          ),
+                          decoration: boxDecoration,
                           child: Column(
                             mainAxisAlignment: MainAxisAlignment.start,
                             children: <Widget>[
@@ -284,17 +272,9 @@ class _MainPageState extends State<MainPage> {
                         const Gap(9.0),
 
                         // ! Main content
-                        Container(
+                        SizedBox(
                           height: constraints.maxHeight - 50.0,
                           width: MediaQuery.of(context).size.width - 77,
-                          padding: const EdgeInsets.all(9.0),
-                          decoration: BoxDecoration(
-                            border: Border.all(
-                              color: Colors.white,
-                              width: 0.3,
-                            ),
-                            borderRadius: BorderRadius.circular(12.0),
-                          ),
                           child: IndexedStack(
                             index: pageIndex,
                             children: <Widget>[
