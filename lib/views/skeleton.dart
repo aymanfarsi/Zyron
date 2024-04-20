@@ -6,14 +6,14 @@ import 'package:window_manager/window_manager.dart';
 import 'package:zyron/src/variables.dart';
 import 'package:zyron/views/components.dart';
 
-class MainPage extends StatefulWidget {
-  const MainPage({super.key});
+class AppSkeleton extends StatefulWidget {
+  const AppSkeleton({super.key});
 
   @override
-  State<MainPage> createState() => _MainPageState();
+  State<AppSkeleton> createState() => _AppSkeletonState();
 }
 
-class _MainPageState extends State<MainPage> {
+class _AppSkeletonState extends State<AppSkeleton> {
   bool isAlwaysOnTop = false;
   bool isConfirmOnExit = true;
   int pageIndex = 0;

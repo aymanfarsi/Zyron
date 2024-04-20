@@ -2,7 +2,7 @@ import 'package:fluent_ui/fluent_ui.dart';
 import 'package:go_router/go_router.dart';
 import 'package:window_manager/window_manager.dart';
 import 'package:zyron/src/variables.dart';
-import 'package:zyron/views/main_page.dart';
+import 'package:zyron/views/skeleton.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -78,7 +78,7 @@ class SkeletonAppState extends State<SkeletonApp> with WindowListener {
 
   @override
   Widget build(BuildContext context) {
-    return const MainPage();
+    return const AppSkeleton();
   }
 
   @override
@@ -118,7 +118,7 @@ class SkeletonAppState extends State<SkeletonApp> with WindowListener {
 
   @override
   void onWindowFocus() {
-    // do something
+    setState(() {});
   }
 
   @override

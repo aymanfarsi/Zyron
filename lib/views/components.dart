@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 
+// ! AppIconButton
 class AppIconButton extends StatelessWidget {
   final Widget icon;
   final Function() onPressed;
@@ -18,6 +19,7 @@ class AppIconButton extends StatelessWidget {
   }
 }
 
+// ! Box Decoration - border wrapping
 final boxDecoration = BoxDecoration(
   border: Border.all(
     color: Colors.white,
