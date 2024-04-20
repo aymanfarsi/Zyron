@@ -15,6 +15,7 @@ class MainPage extends StatefulWidget {
 
 class _MainPageState extends State<MainPage> {
   bool isAlwaysOnTop = false;
+  bool isConfirmOnExit = true;
   int pageIndex = 0;
 
   final menuController = FlyoutController();
@@ -65,8 +66,9 @@ class _MainPageState extends State<MainPage> {
                             onTap: () async {
                               await windowManager.setAlwaysOnTop(
                                   !await windowManager.isAlwaysOnTop());
-                              isAlwaysOnTop =
-                                  await windowManager.isAlwaysOnTop();
+                              setState(() {
+                                isAlwaysOnTop = !isAlwaysOnTop;
+                              });
                             },
                             child: Container(
                               height: 32.0,
@@ -141,16 +143,38 @@ class _MainPageState extends State<MainPage> {
                                           ),
                                           items: [
                                             MenuFlyoutItem(
-                                              text: Text(
-                                                '${isAlwaysOnTop ? 'Disable' : 'Enable'} Always on Top',
+                                              text: const Text('Always on Top'),
+                                              leading: Icon(
+                                                isAlwaysOnTop
+                                                    ? Icons.check
+                                                    : Icons.close,
                                               ),
                                               onPressed: () async {
                                                 await windowManager
                                                     .setAlwaysOnTop(
                                                         !isAlwaysOnTop);
-                                                isAlwaysOnTop =
-                                                    await windowManager
-                                                        .isAlwaysOnTop();
+                                                setState(() {
+                                                  isAlwaysOnTop =
+                                                      !isAlwaysOnTop;
+                                                });
+                                              },
+                                            ),
+                                            MenuFlyoutItem(
+                                              text:
+                                                  const Text('Confirm on exit'),
+                                              leading: Icon(
+                                                isConfirmOnExit
+                                                    ? Icons.check
+                                                    : Icons.close,
+                                              ),
+                                              onPressed: () async {
+                                                await windowManager
+                                                    .setPreventClose(
+                                                        !isConfirmOnExit);
+                                                setState(() {
+                                                  isConfirmOnExit =
+                                                      !isConfirmOnExit;
+                                                });
                                               },
                                             ),
                                           ],
@@ -212,7 +236,6 @@ class _MainPageState extends State<MainPage> {
                           height: constraints.maxHeight - 50.0,
                           width: 50.0,
                           decoration: BoxDecoration(
-                            // color: Colors.white[200],
                             border: Border.all(
                               color: Colors.white,
                               width: 0.3,

@@ -103,7 +103,7 @@ class SkeletonAppState extends State<SkeletonApp> with WindowListener {
             ),
             Button(
               onPressed: () async {
-                await windowManager.close();
+                await windowManager.destroy();
               },
               style: ButtonStyle(
                 backgroundColor: ButtonState.all(Colors.red),
