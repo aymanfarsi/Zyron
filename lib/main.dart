@@ -1,8 +1,10 @@
+import 'package:app_links/app_links.dart';
 import 'package:fluent_ui/fluent_ui.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:go_router/go_router.dart';
 import 'package:twitch_api/twitch_api.dart';
 import 'package:window_manager/window_manager.dart';
+import 'package:zyron/src/utils.dart';
 import 'package:zyron/src/variables.dart';
 import 'package:zyron/views/skeleton.dart';
 
@@ -15,6 +17,19 @@ Future<void> main() async {
     clientId: twitchClientId,
     redirectUri: redirectUri,
   );
+
+  await register('zyron');
+  final appLinks = AppLinks();
+  appLinks.allUriLinkStream.listen((Uri uri) {
+    debugPrint('Received uri: $uri');
+    try {
+      twitchClient.initializeToken(
+        TwitchToken.fromUrl(uri.toString()),
+      );
+    } catch (e) {
+      debugPrint('Error: $e');
+    }
+  });
 
   await windowManager.ensureInitialized();
 

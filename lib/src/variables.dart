@@ -11,7 +11,7 @@ import 'package:zyron/views/youtube_view.dart';
 
 // ! Twitch API
 late final String twitchClientId;
-const String redirectUri = 'http://localhost:8080/static.html';
+const String redirectUri = 'zyron://';
 late final TwitchClient twitchClient;
 
 // ! Pages enums
