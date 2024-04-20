@@ -27,6 +27,10 @@ dependencies:
   rust_lib_zyron:
     path: rust_builder
   flutter_rust_bridge: 2.0.0-dev.32
+  package_info_plus: ^7.0.0
+  launch_at_startup: ^0.2.2
+  tray_manager: ^0.2.2
+  windows_taskbar: ^1.1.2
 
 dev_dependencies:
   flutter_test:

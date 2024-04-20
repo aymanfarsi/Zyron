@@ -1,18 +1,24 @@
+import 'dart:io';
+
 import 'package:app_links/app_links.dart';
 import 'package:fluent_ui/fluent_ui.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
-import 'package:go_router/go_router.dart';
+import 'package:launch_at_startup/launch_at_startup.dart';
+import 'package:package_info_plus/package_info_plus.dart';
+import 'package:tray_manager/tray_manager.dart';
 import 'package:twitch_api/twitch_api.dart';
 import 'package:window_manager/window_manager.dart';
+import 'package:windows_taskbar/windows_taskbar.dart';
 import 'package:zyron/src/rust/frb_generated.dart';
 import 'package:zyron/src/utils.dart';
 import 'package:zyron/src/variables.dart';
-import 'package:zyron/views/skeleton.dart';
 
 Future<void> main() async {
+  // ! Ensure that Flutter and Rust are initialized
   WidgetsFlutterBinding.ensureInitialized();
   await RustLib.init();
 
+  // ! Load environment variables
   await dotenv.load();
   twitchClientId = dotenv.env['TWITCH_CLIENT_ID']!;
   twitchClient = TwitchClient(
@@ -20,6 +26,7 @@ Future<void> main() async {
     redirectUri: redirectUri,
   );
 
+  // ! Register app links
   await register('zyron');
   final appLinks = AppLinks();
   appLinks.allUriLinkStream.listen((Uri uri) {
@@ -33,8 +40,60 @@ Future<void> main() async {
     }
   });
 
-  await windowManager.ensureInitialized();
+  // ! Launch at startup
+  PackageInfo packageInfo = await PackageInfo.fromPlatform();
+  launchAtStartup.setup(
+    appName: packageInfo.appName,
+    appPath: Platform.resolvedExecutable,
+  );
+  await launchAtStartup.enable();
 
+  // ! Initialize the system tray
+  await trayManager.setIcon(
+    Platform.isWindows ? 'assets/zyron_icon.ico' : 'assets/zyron_icon.png',
+  );
+  await trayManager.setTitle('Zyron');
+  await trayManager.setToolTip('Zyron System Tray');
+  Menu menu = Menu(
+    items: [
+      MenuItem(
+        key: 'show_window',
+        label: 'Show Window',
+      ),
+      MenuItem.separator(),
+      MenuItem(
+        key: 'exit_app',
+        label: 'Exit App',
+      ),
+    ],
+  );
+  await trayManager.setContextMenu(menu);
+
+  // ! Initialize the Windows Taskbar
+  await WindowsTaskbar.setThumbnailToolbar(
+    [
+      ThumbnailToolbarButton(
+        ThumbnailToolbarAssetIcon('assets/camera.ico'),
+        'Turn On Camera',
+        () {},
+      ),
+      ThumbnailToolbarButton(
+        ThumbnailToolbarAssetIcon('assets/microphone.ico'),
+        'Mute',
+        () {},
+        mode: ThumbnailToolbarButtonMode.disabled |
+            ThumbnailToolbarButtonMode.dismissionClick,
+      ),
+      ThumbnailToolbarButton(
+        ThumbnailToolbarAssetIcon('assets/end_call.ico'),
+        'Disconnect',
+        () {},
+      ),
+    ],
+  );
+
+  // ! Initialize the window manager
+  await windowManager.ensureInitialized();
   WindowOptions windowOptions = const WindowOptions(
     title: 'Zyron',
     size: Size(800, 600),
@@ -50,6 +109,7 @@ Future<void> main() async {
     await windowManager.focus();
   });
 
+  // ! Run the app
   runApp(
     FluentApp.router(
       title: 'Zyron',
@@ -80,115 +140,4 @@ Future<void> main() async {
       },
     ),
   );
-}
-
-class SkeletonApp extends StatefulWidget {
-  const SkeletonApp({super.key});
-
-  @override
-  SkeletonAppState createState() => SkeletonAppState();
-}
-
-class SkeletonAppState extends State<SkeletonApp> with WindowListener {
-  @override
-  void initState() {
-    super.initState();
-    windowManager.addListener(this);
-  }
-
-  @override
-  void dispose() {
-    windowManager.removeListener(this);
-    super.dispose();
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return const AppSkeleton();
-  }
-
-  @override
-  void onWindowEvent(String eventName) {
-    // print('[WindowManager] onWindowEvent: $eventName');
-  }
-
-  @override
-  void onWindowClose() async {
-    await showDialog(
-      context: context,
-      builder: (context) {
-        return ContentDialog(
-          title: const Text('Close Window'),
-          content: const Text('Are you sure you want to close the window?'),
-          actions: <Widget>[
-            Button(
-              onPressed: () {
-                context.pop();
-              },
-              child: const Text('Cancel'),
-            ),
-            Button(
-              onPressed: () async {
-                await windowManager.destroy();
-              },
-              style: ButtonStyle(
-                backgroundColor: ButtonState.all(Colors.red),
-              ),
-              child: const Text('Close'),
-            ),
-          ],
-        );
-      },
-    );
-  }
-
-  @override
-  void onWindowFocus() {
-    setState(() {});
-  }
-
-  @override
-  void onWindowBlur() {
-    // do something
-  }
-
-  @override
-  void onWindowMaximize() {
-    // do something
-  }
-
-  @override
-  void onWindowUnmaximize() {
-    // do something
-  }
-
-  @override
-  void onWindowMinimize() {
-    // do something
-  }
-
-  @override
-  void onWindowRestore() {
-    // do something
-  }
-
-  @override
-  void onWindowResize() {
-    // do something
-  }
-
-  @override
-  void onWindowMove() {
-    // do something
-  }
-
-  @override
-  void onWindowEnterFullScreen() {
-    // do something
-  }
-
-  @override
-  void onWindowLeaveFullScreen() {
-    // do something
-  }
 }

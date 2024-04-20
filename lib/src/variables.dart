@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:go_router/go_router.dart';
 import 'package:twitch_api/twitch_api.dart';
-import 'package:zyron/main.dart';
+import 'package:zyron/app.dart';
 import 'package:zyron/views/anime_view.dart';
 import 'package:zyron/views/help_view.dart';
 import 'package:zyron/views/settings_view.dart';

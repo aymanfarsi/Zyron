@@ -5,6 +5,7 @@
 list(APPEND FLUTTER_PLUGIN_LIST
   gtk
   screen_retriever
+  tray_manager
   window_manager
 )
 
