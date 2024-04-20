@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:go_router/go_router.dart';
+import 'package:twitch_api/twitch_api.dart';
 import 'package:zyron/main.dart';
 import 'package:zyron/views/anime_view.dart';
 import 'package:zyron/views/help_view.dart';
@@ -8,8 +9,10 @@ import 'package:zyron/views/settings_view.dart';
 import 'package:zyron/views/twitch_view.dart';
 import 'package:zyron/views/youtube_view.dart';
 
+// ! Twitch API
 late final String twitchClientId;
-late final String twitchClientSecret;
+const String redirectUri = 'http://localhost:8080/static.html';
+late final TwitchClient twitchClient;
 
 // ! Pages enums
 enum AppPages {
