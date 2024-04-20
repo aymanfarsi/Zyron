@@ -10,6 +10,8 @@ class TwitchView extends StatefulWidget {
 }
 
 class _TwitchViewState extends State<TwitchView> {
+  int selectedIndex = 0;
+
   @override
   Widget build(BuildContext context) {
     return Row(
@@ -26,11 +28,53 @@ class _TwitchViewState extends State<TwitchView> {
               shrinkWrap: true,
               itemCount: 10,
               itemBuilder: (context, index) {
-                return const Card(
-                  child: ListTile(
-                    title: Text('Twitch Channel'),
-                    subtitle: Text('Online'),
-                    leading: Icon(Icons.circle),
+                return Card(
+                  elevation: 2.0,
+                  shape: const RoundedRectangleBorder(
+                    borderRadius: BorderRadius.all(Radius.circular(8.0)),
+                  ),
+                  child: Tooltip(
+                    message: 'Twitch Channel',
+                    waitDuration: const Duration(milliseconds: 1000),
+                    preferBelow: true,
+                    child: ListTile(
+                      visualDensity: VisualDensity.compact,
+                      splashColor: Colors.transparent,
+                      focusColor: Colors.transparent,
+                      hoverColor: Colors.transparent,
+                      selected: selectedIndex == index,
+                      selectedColor: Colors.yellow,
+                      contentPadding:
+                          const EdgeInsets.symmetric(horizontal: 8.0),
+                      title: const Text(
+                        'Twitch Channel',
+                        style: TextStyle(
+                          fontWeight: FontWeight.bold,
+                          fontSize: 14.0,
+                        ),
+                        overflow: TextOverflow.ellipsis,
+                        maxLines: 1,
+                      ),
+                      subtitle: const Text(
+                        'Online',
+                        style: TextStyle(
+                          color: Colors.green,
+                          fontSize: 10.0,
+                        ),
+                      ),
+                      leading: const CircleAvatar(
+                        backgroundColor: Colors.purple,
+                        child: Icon(
+                          Icons.circle,
+                          color: Colors.white,
+                        ),
+                      ),
+                      onTap: () {
+                        setState(() {
+                          selectedIndex = index;
+                        });
+                      },
+                    ),
                   ),
                 );
               },
@@ -41,8 +85,8 @@ class _TwitchViewState extends State<TwitchView> {
         Container(
           width: MediaQuery.of(context).size.width - 236.0,
           decoration: boxDecoration,
-          child: const Center(
-            child: Text('Twitch'),
+          child: Center(
+            child: Text('Twitch Channel ${selectedIndex + 1}'),
           ),
         )
       ],
