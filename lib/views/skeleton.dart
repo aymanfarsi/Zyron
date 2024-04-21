@@ -1,23 +1,22 @@
 import 'package:fluent_ui/fluent_ui.dart';
 import 'package:flutter/material.dart' show Scaffold, Icons;
+import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:gap/gap.dart';
+import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:window_manager/window_manager.dart';
+import 'package:zyron/providers/app_settings_provider.dart';
 import 'package:zyron/src/variables.dart';
 import 'package:zyron/views/components.dart';
 
-class AppSkeleton extends StatefulWidget {
+class AppSkeleton extends StatefulHookConsumerWidget {
   const AppSkeleton({super.key});
 
   @override
-  State<AppSkeleton> createState() => _AppSkeletonState();
+  ConsumerState<AppSkeleton> createState() => _AppSkeletonState();
 }
 
-class _AppSkeletonState extends State<AppSkeleton> {
-  bool isAlwaysOnTop = false;
-  bool isConfirmOnExit = true;
-  int pageIndex = 0;
-
+class _AppSkeletonState extends ConsumerState<AppSkeleton> {
   final menuController = FlyoutController();
   final contextAttachKey = GlobalKey();
 
@@ -33,6 +32,9 @@ class _AppSkeletonState extends State<AppSkeleton> {
 
   @override
   Widget build(BuildContext context) {
+    final appSettings = ref.watch(appSettingsProvider);
+    final pageIndex = useState(0);
+
     return Scaffold(
       body: LayoutBuilder(
         builder: (context, constraints) {
@@ -56,12 +58,10 @@ class _AppSkeletonState extends State<AppSkeleton> {
                         Padding(
                           padding: const EdgeInsets.all(9.0),
                           child: GestureDetector(
-                            onTap: () async {
-                              await windowManager.setAlwaysOnTop(
-                                  !await windowManager.isAlwaysOnTop());
-                              setState(() {
-                                isAlwaysOnTop = !isAlwaysOnTop;
-                              });
+                            onTap: () {
+                              ref
+                                  .read(appSettingsProvider.notifier)
+                                  .setDarkMode(!appSettings.isDarkMode);
                             },
                             child: Container(
                               height: 32.0,
@@ -138,36 +138,33 @@ class _AppSkeletonState extends State<AppSkeleton> {
                                             MenuFlyoutItem(
                                               text: const Text('Always on Top'),
                                               leading: Icon(
-                                                isAlwaysOnTop
+                                                appSettings.isAlwaysOnTop
                                                     ? Icons.check
                                                     : Icons.close,
                                               ),
-                                              onPressed: () async {
-                                                await windowManager
-                                                    .setAlwaysOnTop(
-                                                        !isAlwaysOnTop);
-                                                setState(() {
-                                                  isAlwaysOnTop =
-                                                      !isAlwaysOnTop;
-                                                });
+                                              onPressed: () {
+                                                ref
+                                                    .read(appSettingsProvider
+                                                        .notifier)
+                                                    .setAlwaysOnTop(!appSettings
+                                                        .isAlwaysOnTop);
                                               },
                                             ),
                                             MenuFlyoutItem(
                                               text:
                                                   const Text('Confirm on exit'),
                                               leading: Icon(
-                                                isConfirmOnExit
+                                                appSettings.isPreventClose
                                                     ? Icons.check
                                                     : Icons.close,
                                               ),
-                                              onPressed: () async {
-                                                await windowManager
+                                              onPressed: () {
+                                                ref
+                                                    .read(appSettingsProvider
+                                                        .notifier)
                                                     .setPreventClose(
-                                                        !isConfirmOnExit);
-                                                setState(() {
-                                                  isConfirmOnExit =
-                                                      !isConfirmOnExit;
-                                                });
+                                                        !appSettings
+                                                            .isPreventClose);
                                               },
                                             ),
                                           ],
@@ -241,7 +238,7 @@ class _AppSkeletonState extends State<AppSkeleton> {
                                     icon: FaIcon(page.icon),
                                     onPressed: () {
                                       setState(() {
-                                        pageIndex =
+                                        pageIndex.value =
                                             AppPages.sidebarItems.indexOf(page);
                                       });
                                     },
@@ -257,7 +254,7 @@ class _AppSkeletonState extends State<AppSkeleton> {
                                     icon: FaIcon(page.icon),
                                     onPressed: () {
                                       setState(() {
-                                        pageIndex =
+                                        pageIndex.value =
                                             AppPages.footerItems.indexOf(page) +
                                                 3;
                                       });
@@ -275,7 +272,7 @@ class _AppSkeletonState extends State<AppSkeleton> {
                           height: constraints.maxHeight - 50.0,
                           width: MediaQuery.of(context).size.width - 77,
                           child: IndexedStack(
-                            index: pageIndex,
+                            index: pageIndex.value,
                             children: <Widget>[
                               for (AppPages page in AppPages.values)
                                 SizedBox(
