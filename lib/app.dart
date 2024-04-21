@@ -1,4 +1,5 @@
 import 'package:fluent_ui/fluent_ui.dart';
+import 'package:flutter/material.dart' show Scaffold, CircularProgressIndicator;
 import 'package:go_router/go_router.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:launch_at_startup/launch_at_startup.dart';
@@ -23,7 +24,6 @@ class AppFrameState extends ConsumerState<AppFrame>
     trayManager.addListener(this);
     windowManager.addListener(this);
 
-    _initAppSettings();
     ref.listenManual(appSettingsProvider, (previous, next) async {
       // ! Always on top
       await windowManager.setAlwaysOnTop(next.isAlwaysOnTop);
@@ -47,26 +47,49 @@ class AppFrameState extends ConsumerState<AppFrame>
     super.dispose();
   }
 
-  void _initAppSettings() {
+  Future<bool> _initAppSettings() async {
     final appSettings = ref.read(appSettingsProvider);
 
-    // ! Always on top
-    windowManager.setAlwaysOnTop(appSettings.isAlwaysOnTop);
+    try {
+      // ! Always on top
+      await windowManager.setAlwaysOnTop(appSettings.isAlwaysOnTop);
 
-    // ! Prevent close
-    windowManager.setPreventClose(appSettings.isPreventClose);
+      // ! Prevent close
+      await windowManager.setPreventClose(appSettings.isPreventClose);
 
-    // ! Auto start
-    if (appSettings.isAutoStart) {
-      launchAtStartup.enable();
-    } else {
-      launchAtStartup.disable();
+      // ! Auto start
+      if (appSettings.isAutoStart) {
+        await launchAtStartup.enable();
+      } else {
+        await launchAtStartup.disable();
+      }
+
+      // ! App settings
+      await ref.read(appSettingsProvider.notifier).loadSettings();
+
+      return true;
+    } catch (e) {
+      return false;
     }
   }
 
   @override
   Widget build(BuildContext context) {
-    return const AppSkeleton();
+    return FutureBuilder<bool>(
+      future: _initAppSettings(),
+      builder: (context, snapshot) {
+        if (snapshot.connectionState == ConnectionState.done) {
+          return const AppSkeleton();
+        }
+        return Scaffold(
+          body: Center(
+            child: snapshot.hasError
+                ? Text('Error: ${snapshot.error}')
+                : const CircularProgressIndicator(),
+          ),
+        );
+      },
+    );
   }
 
   // ************************************************************

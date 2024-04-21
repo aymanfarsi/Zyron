@@ -44,6 +44,32 @@ class SettingsView extends ConsumerWidget {
               ),
             ],
           ),
+          const Gap(16.0),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Button(
+                onPressed: () async {
+                  await ref.read(appSettingsProvider.notifier).saveSettings();
+                },
+                child: const Text('Save settings'),
+              ),
+              const SizedBox(width: 8.0),
+              Button(
+                onPressed: () {
+                  ref.read(appSettingsProvider.notifier).reset();
+                },
+                child: const Text('Reset settings'),
+              ),
+              const SizedBox(width: 8.0),
+              Button(
+                onPressed: () async {
+                  await ref.read(appSettingsProvider.notifier).loadSettings();
+                },
+                child: const Text('Load settings'),
+              ),
+            ],
+          ),
         ],
       ),
     );

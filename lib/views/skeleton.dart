@@ -33,7 +33,6 @@ class _AppSkeletonState extends State<AppSkeleton> {
 
   @override
   Widget build(BuildContext context) {
-    debugPrint('Building MainPage');
     return Scaffold(
       body: LayoutBuilder(
         builder: (context, constraints) {

@@ -1,4 +1,10 @@
+import 'dart:convert';
+import 'dart:io';
+
+import 'package:file_picker/file_picker.dart';
+import 'package:fluent_ui/fluent_ui.dart' show debugPrint;
 import 'package:riverpod_annotation/riverpod_annotation.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:zyron/models/app_settings_model.dart';
 import 'package:zyron/models/player_settings_model.dart';
 
@@ -8,25 +14,7 @@ part 'app_settings_provider.g.dart';
 class AppSettings extends _$AppSettings {
   @override
   AppSettingsModel build() {
-    return AppSettingsModel(
-      isDarkMode: true,
-      isAlwaysOnTop: true,
-      isPreventClose: true,
-      isAutoStart: false,
-      startingPage: 0,
-      playerSettings: PlayerSettingsModel(
-        quality: 'best',
-        isMuted: false,
-        volume: 75,
-        exitOnDone: false,
-        mpvExe: 'mpv',
-        mpvWindowSizeX: 0,
-        mpvWindowSizeY: 0,
-        mpvWindowPosX: 0,
-        mpvWindowPosY: 0,
-        isAutoPlay: false,
-      ),
-    );
+    return reset(returnState: true)!;
   }
 
   void setDarkMode(bool isDarkMode) {
@@ -113,7 +101,95 @@ class AppSettings extends _$AppSettings {
     );
   }
 
-  void reset() {
-    state = build();
+  AppSettingsModel? reset({bool returnState = false}) {
+    state = AppSettingsModel(
+      isDarkMode: true,
+      isAlwaysOnTop: true,
+      isPreventClose: true,
+      isAutoStart: false,
+      startingPage: 0,
+      playerSettings: PlayerSettingsModel(
+        quality: 'best',
+        isMuted: false,
+        volume: 75,
+        exitOnDone: false,
+        mpvExe: 'mpv',
+        mpvWindowSizeX: 0,
+        mpvWindowSizeY: 0,
+        mpvWindowPosX: 0,
+        mpvWindowPosY: 0,
+        isAutoPlay: false,
+      ),
+    );
+    if (returnState) {
+      return state;
+    }
+    return null;
+  }
+
+  Future<void> saveSettings() async {
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
+    String encodedJson = jsonEncode(state.toJson());
+    await prefs.setString('zyron_settings', encodedJson);
+  }
+
+  Future<void> loadSettings() async {
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
+    String? json = prefs.getString('zyron_settings');
+
+    if (json == null) {
+      reset();
+      return;
+    }
+
+    Map<String, dynamic> decodedJson = jsonDecode(json);
+    state = AppSettingsModel.fromJson(decodedJson);
+  }
+
+  Future<bool> exportSettings() async {
+    String? selectedDirectory = await FilePicker.platform.getDirectoryPath();
+
+    if (selectedDirectory == null) {
+      return false;
+    }
+
+    try {
+      File file = File('$selectedDirectory/zyron_settings.json');
+      String encodedJson = jsonEncode(state.toJson());
+      await file.writeAsString(encodedJson);
+
+      return true;
+    } catch (e) {
+      debugPrint('Save Settings Error: $e');
+
+      return false;
+    }
+  }
+
+  Future<bool> restoreSettings() async {
+    FilePickerResult? result = await FilePicker.platform.pickFiles(
+      allowMultiple: false,
+      type: FileType.custom,
+      allowedExtensions: ['json'],
+    );
+
+    if (result == null || result.files.isEmpty) {
+      return false;
+    }
+
+    try {
+      String selectedFile = result.files.single.path!;
+      File file = File(selectedFile);
+      String json = await file.readAsString();
+      Map<String, dynamic> decodedJson = jsonDecode(json);
+
+      state = AppSettingsModel.fromJson(decodedJson);
+
+      return true;
+    } catch (e) {
+      debugPrint('Load Settings Error: $e');
+
+      return false;
+    }
   }
 }
