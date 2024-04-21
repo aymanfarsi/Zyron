@@ -163,7 +163,7 @@ class AppFrameState extends ConsumerState<AppFrame>
 
   @override
   void onWindowFocus() {
-    setState(() {});
+    // do something
   }
 
   @override

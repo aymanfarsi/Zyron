@@ -103,7 +103,7 @@ class _SettingsViewState extends ConsumerState<SettingsView> {
           SplitButton(
             key: splitButtonKey,
             flyout: FlyoutContent(
-              constraints: const BoxConstraints(maxWidth: 200.0),
+              constraints: const BoxConstraints(maxWidth: 250.0),
               child: Wrap(
                 runSpacing: 10.0,
                 spacing: 8.0,
