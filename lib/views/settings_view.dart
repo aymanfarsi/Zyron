@@ -134,7 +134,7 @@ class _SettingsViewState extends ConsumerState<SettingsView> {
                 ),
               ),
               height: 32,
-              width: 36,
+              width: 100,
               alignment: Alignment.center,
               child: Text('Page ${appSettings.startingPage}'),
             ),
