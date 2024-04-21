@@ -78,16 +78,17 @@ class AppFrameState extends ConsumerState<AppFrame>
     return FutureBuilder<bool>(
       future: _initAppSettings(),
       builder: (context, snapshot) {
-        if (snapshot.connectionState == ConnectionState.done) {
-          return const AppSkeleton();
+        if (snapshot.connectionState == ConnectionState.waiting) {
+          return const CircularProgressIndicator();
         }
-        return Scaffold(
-          body: Center(
-            child: snapshot.hasError
-                ? Text('Error: ${snapshot.error}')
-                : const CircularProgressIndicator(),
-          ),
-        );
+        if (snapshot.hasError) {
+          return Scaffold(
+            body: Center(
+              child: Text('Error: ${snapshot.error}'),
+            ),
+          );
+        }
+        return const AppSkeleton();
       },
     );
   }

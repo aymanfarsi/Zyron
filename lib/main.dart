@@ -152,13 +152,13 @@ Future<void> main() async {
   // ! Run the app
   runApp(
     const ProviderScope(
-      child: App(),
+      child: ZyronApp(),
     ),
   );
 }
 
-class App extends ConsumerWidget {
-  const App({super.key});
+class ZyronApp extends ConsumerWidget {
+  const ZyronApp({super.key});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {

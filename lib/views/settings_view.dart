@@ -1,13 +1,21 @@
 import 'package:fluent_ui/fluent_ui.dart';
 import 'package:gap/gap.dart';
+import 'package:go_router/go_router.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:zyron/providers/app_settings_provider.dart';
 
-class SettingsView extends ConsumerWidget {
+class SettingsView extends ConsumerStatefulWidget {
   const SettingsView({super.key});
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
+  ConsumerState<SettingsView> createState() => _SettingsViewState();
+}
+
+class _SettingsViewState extends ConsumerState<SettingsView> {
+  final splitButtonKey = GlobalKey<SplitButtonState>();
+
+  @override
+  Widget build(BuildContext context) {
     final appSettings = ref.watch(appSettingsProvider);
 
     return Center(
@@ -91,6 +99,46 @@ class SettingsView extends ConsumerWidget {
               ),
             ],
           ),
+          const Gap(16.0),
+          SplitButton(
+            key: splitButtonKey,
+            flyout: FlyoutContent(
+              constraints: const BoxConstraints(maxWidth: 200.0),
+              child: Wrap(
+                runSpacing: 10.0,
+                spacing: 8.0,
+                children: [
+                  for (int i = 0; i < 5; i++)
+                    Button(
+                      autofocus: appSettings.startingPage == i,
+                      style: ButtonStyle(
+                        padding: ButtonState.all(
+                          const EdgeInsets.all(4.0),
+                        ),
+                      ),
+                      onPressed: () {
+                        ref
+                            .read(appSettingsProvider.notifier)
+                            .setStartingPage(i);
+                        context.pop();
+                      },
+                      child: Text('Page $i'),
+                    )
+                ],
+              ),
+            ),
+            child: Container(
+              decoration: const BoxDecoration(
+                borderRadius: BorderRadiusDirectional.horizontal(
+                  start: Radius.circular(4.0),
+                ),
+              ),
+              height: 32,
+              width: 36,
+              alignment: Alignment.center,
+              child: Text('Page ${appSettings.startingPage}'),
+            ),
+          )
         ],
       ),
     );

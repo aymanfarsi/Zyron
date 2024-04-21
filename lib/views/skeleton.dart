@@ -1,6 +1,5 @@
 import 'package:fluent_ui/fluent_ui.dart';
 import 'package:flutter/material.dart' show Scaffold, Icons;
-import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:gap/gap.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
@@ -20,6 +19,8 @@ class _AppSkeletonState extends ConsumerState<AppSkeleton> {
   final menuController = FlyoutController();
   final contextAttachKey = GlobalKey();
 
+  int pageIndex = 0;
+
   @override
   void initState() {
     super.initState();
@@ -33,7 +34,6 @@ class _AppSkeletonState extends ConsumerState<AppSkeleton> {
   @override
   Widget build(BuildContext context) {
     final appSettings = ref.watch(appSettingsProvider);
-    final pageIndex = useState(0);
 
     return Scaffold(
       body: LayoutBuilder(
@@ -61,7 +61,7 @@ class _AppSkeletonState extends ConsumerState<AppSkeleton> {
                             onTap: () {
                               ref
                                   .read(appSettingsProvider.notifier)
-                                  .setDarkMode(!appSettings.isDarkMode);
+                                  .setAlwaysOnTop(!appSettings.isAlwaysOnTop);
                             },
                             child: Container(
                               height: 32.0,
@@ -238,7 +238,7 @@ class _AppSkeletonState extends ConsumerState<AppSkeleton> {
                                     icon: FaIcon(page.icon),
                                     onPressed: () {
                                       setState(() {
-                                        pageIndex.value =
+                                        pageIndex =
                                             AppPages.sidebarItems.indexOf(page);
                                       });
                                     },
@@ -254,7 +254,7 @@ class _AppSkeletonState extends ConsumerState<AppSkeleton> {
                                     icon: FaIcon(page.icon),
                                     onPressed: () {
                                       setState(() {
-                                        pageIndex.value =
+                                        pageIndex =
                                             AppPages.footerItems.indexOf(page) +
                                                 3;
                                       });
@@ -272,7 +272,7 @@ class _AppSkeletonState extends ConsumerState<AppSkeleton> {
                           height: constraints.maxHeight - 50.0,
                           width: MediaQuery.of(context).size.width - 77,
                           child: IndexedStack(
-                            index: pageIndex.value,
+                            index: pageIndex,
                             children: <Widget>[
                               for (AppPages page in AppPages.values)
                                 SizedBox(
