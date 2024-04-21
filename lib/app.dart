@@ -1,22 +1,43 @@
 import 'package:fluent_ui/fluent_ui.dart';
 import 'package:go_router/go_router.dart';
+import 'package:hooks_riverpod/hooks_riverpod.dart';
+import 'package:launch_at_startup/launch_at_startup.dart';
 import 'package:tray_manager/tray_manager.dart';
 import 'package:window_manager/window_manager.dart';
+import 'package:zyron/providers/app_settings_provider.dart';
 import 'package:zyron/views/skeleton.dart';
 
-class AppFrame extends StatefulWidget {
+class AppFrame extends ConsumerStatefulWidget {
   const AppFrame({super.key});
 
   @override
-  AppFrameState createState() => AppFrameState();
+  ConsumerState<ConsumerStatefulWidget> createState() => AppFrameState();
 }
 
-class AppFrameState extends State<AppFrame> with WindowListener, TrayListener {
+class AppFrameState extends ConsumerState<AppFrame>
+    with WindowListener, TrayListener {
   @override
   void initState() {
     super.initState();
+
     trayManager.addListener(this);
     windowManager.addListener(this);
+
+    _initAppSettings();
+    ref.listenManual(appSettingsProvider, (previous, next) async {
+      // ! Always on top
+      await windowManager.setAlwaysOnTop(next.isAlwaysOnTop);
+
+      // ! Prevent close
+      await windowManager.setPreventClose(next.isPreventClose);
+
+      // ! Auto start
+      if (next.isAutoStart) {
+        await launchAtStartup.enable();
+      } else {
+        await launchAtStartup.disable();
+      }
+    });
   }
 
   @override
@@ -24,6 +45,23 @@ class AppFrameState extends State<AppFrame> with WindowListener, TrayListener {
     trayManager.removeListener(this);
     windowManager.removeListener(this);
     super.dispose();
+  }
+
+  void _initAppSettings() {
+    final appSettings = ref.read(appSettingsProvider);
+
+    // ! Always on top
+    windowManager.setAlwaysOnTop(appSettings.isAlwaysOnTop);
+
+    // ! Prevent close
+    windowManager.setPreventClose(appSettings.isPreventClose);
+
+    // ! Auto start
+    if (appSettings.isAutoStart) {
+      launchAtStartup.enable();
+    } else {
+      launchAtStartup.disable();
+    }
   }
 
   @override
