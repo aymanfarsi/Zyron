@@ -1,4 +1,5 @@
-import 'package:flutter/material.dart';
+import 'package:fluent_ui/fluent_ui.dart';
+import 'package:gap/gap.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:zyron/providers/app_settings_provider.dart';
 
@@ -14,33 +15,31 @@ class SettingsView extends ConsumerWidget {
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
           const Text('Settings View'),
+          const Gap(16.0),
           Row(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              ElevatedButton(
-                onPressed: () async {
-                  ref
-                      .read(appSettingsProvider.notifier)
-                      .setDarkMode(!appSettings.isDarkMode);
+              ToggleButton(
+                onChanged: (bool v) async {
+                  ref.read(appSettingsProvider.notifier).setDarkMode(v);
                 },
+                checked: appSettings.isDarkMode,
                 child: const Text('Toggle Theme'),
               ),
               const SizedBox(width: 8.0),
-              ElevatedButton(
-                onPressed: () async {
-                  ref
-                      .read(appSettingsProvider.notifier)
-                      .setAlwaysOnTop(!appSettings.isAlwaysOnTop);
+              ToggleButton(
+                onChanged: (bool v) async {
+                  ref.read(appSettingsProvider.notifier).setAlwaysOnTop(v);
                 },
+                checked: appSettings.isAlwaysOnTop,
                 child: const Text('Toggle Always On Top'),
               ),
               const SizedBox(width: 8.0),
-              ElevatedButton(
-                onPressed: () async {
-                  ref
-                      .read(appSettingsProvider.notifier)
-                      .setPreventClose(!appSettings.isPreventClose);
+              ToggleButton(
+                onChanged: (bool v) async {
+                  ref.read(appSettingsProvider.notifier).setPreventClose(v);
                 },
+                checked: appSettings.isPreventClose,
                 child: const Text('Toggle Prevent Close'),
               ),
             ],
