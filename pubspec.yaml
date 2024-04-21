@@ -35,6 +35,7 @@ dependencies:
   freezed_annotation: ^2.4.1
   json_annotation: ^4.8.1
   file_picker: ^8.0.1
+  youtube_explode_dart: ^2.2.0
 
 dev_dependencies:
   flutter_test:
