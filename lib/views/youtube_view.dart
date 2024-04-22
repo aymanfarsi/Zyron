@@ -1,5 +1,5 @@
 import 'package:desktop_context_menu/desktop_context_menu.dart';
-import 'package:flutter/material.dart';
+import 'package:fluent_ui/fluent_ui.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:gap/gap.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
@@ -51,48 +51,50 @@ class YouTubeView extends HookConsumerWidget {
       decoration: boxDecoration,
       width: MediaQuery.of(context).size.width,
       height: MediaQuery.of(context).size.height,
+      padding: const EdgeInsets.all(9.0),
       child: Column(
         children: [
           Row(
             mainAxisAlignment: MainAxisAlignment.center,
-            crossAxisAlignment: CrossAxisAlignment.center,
             children: [
               SizedBox(
                 height: 40.0,
                 width: 500.0,
-                child: TextField(
+                child: TextBox(
                   controller: searchQuery,
-                  decoration: const InputDecoration(
-                    hintText: 'Search YouTube',
+                  placeholder: 'Search YouTube',
+                  decoration: boxDecoration.copyWith(
+                    border: const Border.symmetric(
+                      horizontal: BorderSide.none,
+                    ),
                   ),
                   onSubmitted: (value) async {
                     searchList.value = [];
                     viewType.value = YouTubeViewType.searching;
-                    searchList.value =
-                        await ref.read(youTubeListProvider.notifier).search(
-                              query: searchQuery.text,
-                            );
+                    searchList.value = await ref
+                        .read(youTubeListProvider.notifier)
+                        .search(query: searchQuery.text);
                     viewType.value = YouTubeViewType.results;
                   },
                 ),
               ),
               const Gap(20.0),
               IconButton(
-                icon: const Icon(Icons.search),
+                icon: const Icon(FluentIcons.search),
+                iconButtonMode: IconButtonMode.small,
                 onPressed: () async {
                   searchList.value = [];
                   viewType.value = YouTubeViewType.searching;
-                  searchList.value =
-                      await ref.read(youTubeListProvider.notifier).search(
-                            query: searchQuery.text,
-                          );
+                  searchList.value = await ref
+                      .read(youTubeListProvider.notifier)
+                      .search(query: searchQuery.text);
                   viewType.value = YouTubeViewType.results;
                 },
               ),
             ],
           ),
           SizedBox(
-            height: MediaQuery.of(context).size.height - 118.0,
+            height: MediaQuery.of(context).size.height - 136,
             width: MediaQuery.of(context).size.width,
             child: searchList.value.isEmpty
                 ? Center(
@@ -128,14 +130,9 @@ class YouTubeView extends HookConsumerWidget {
                           }
                           await ref
                               .read(youTubeListProvider.notifier)
-                              .addChannel(
-                                channel,
-                              );
+                              .addChannel(channel);
                         },
                         child: ListTile(
-                          focusColor: Colors.transparent,
-                          hoverColor: Colors.transparent,
-                          splashColor: Colors.transparent,
                           leading: CircleAvatar(
                             backgroundImage: channel.logo.isEmpty
                                 ? null
