@@ -10,7 +10,7 @@ import 'package:zyron/models/youtube_channel_model.dart';
 
 part 'youtube_provider.g.dart';
 
-@riverpod
+@Riverpod(keepAlive: true)
 class YouTubeList extends _$YouTubeList {
   @override
   List<YouTubeChannelModel> build() {
@@ -20,38 +20,56 @@ class YouTubeList extends _$YouTubeList {
   Future<List<YouTubeChannelModel>> search({required String query}) async {
     final YoutubeHttpClient ytClient = YoutubeHttpClient();
     final SearchClient searchClient = SearchClient(ytClient);
-    final SearchList results = await searchClient.searchContent(
-      query,
-      filter: TypeFilters.channel,
-    );
+    final channelClient = ChannelClient(ytClient);
+    final SearchList results =
+        await searchClient.searchContent(query, filter: TypeFilters.channel);
     List<YouTubeChannelModel> channels = [];
     for (final SearchResult channel in results) {
       if (channel is SearchChannel) {
-        final YouTubeChannelModel ytChannel = YouTubeChannelModel(
-          id: channel.id.value,
-          name: channel.name,
-          url: 'https://www.youtube.com/channel/${channel.id.value}',
-          logo: '',
-        );
-        channels.add(ytChannel);
+        final Channel c = await channelClient.get(channel.id.value);
+        channels.add(YouTubeChannelModel(
+          id: c.id.value,
+          name: c.title,
+          url: c.url,
+          logo: c.logoUrl,
+          subscribers: c.subscribersCount ?? -1,
+        ));
       }
     }
     return channels;
   }
 
-  void addChannel(YouTubeChannelModel channel) {
+  Future<void> addChannel(YouTubeChannelModel channel) async {
+    if (state.any((c) => c.id == channel.id)) {
+      debugPrint('Channel already exists');
+      return;
+    }
     state = [...state, channel];
+    debugPrint('Channel added');
+    await saveChannels();
   }
 
-  void removeChannel(YouTubeChannelModel channel) {
+  Future<void> removeChannel(YouTubeChannelModel channel) async {
+    if (!state.any((c) => c.id == channel.id)) {
+      debugPrint('Channel does not exist');
+      return;
+    }
     state = state.where((c) => c.id != channel.id).toList();
+    debugPrint('Channel removed');
+    await saveChannels();
   }
 
-  void reorderChannel(int oldIndex, int newIndex) {
+  Future<void> reorderChannel(int oldIndex, int newIndex) async {
+    if (oldIndex == newIndex) {
+      debugPrint('Same index');
+      return;
+    }
     final channels = state;
     final channel = channels.removeAt(oldIndex);
     channels.insert(newIndex, channel);
     state = channels;
+    debugPrint('Channel reordered');
+    await saveChannels();
   }
 
   String encodeChannels() {
@@ -66,6 +84,7 @@ class YouTubeList extends _$YouTubeList {
   Future<void> saveChannels() async {
     final SharedPreferences prefs = await SharedPreferences.getInstance();
     await prefs.setString('zyron_channels', encodeChannels());
+    debugPrint('${state.length} Channel(s) saved');
   }
 
   Future<void> loadChannels() async {
@@ -90,11 +109,10 @@ class YouTubeList extends _$YouTubeList {
       File file = File('$selectedDirectory/zyron_channels.json');
       String encodedJson = encodeChannels();
       await file.writeAsString(encodedJson);
-
+      debugPrint('Channels exported');
       return true;
     } catch (e) {
       debugPrint('Save Channels Error: $e');
-
       return false;
     }
   }
@@ -116,11 +134,9 @@ class YouTubeList extends _$YouTubeList {
       String json = await file.readAsString();
 
       decodeChannels(json);
-
       return true;
     } catch (e) {
       debugPrint('Load Channels Error: $e');
-
       return false;
     }
   }

@@ -265,6 +265,38 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "2.3.6"
+  desktop_context_menu:
+    dependency: "direct main"
+    description:
+      name: desktop_context_menu
+      sha256: b9d4e9afc885e7aee6db178fc7c1714727cccb3c692850b68dcfa8c7359da7f6
+      url: "https://pub.dev"
+    source: hosted
+    version: "0.1.1"
+  desktop_context_menu_macos:
+    dependency: transitive
+    description:
+      name: desktop_context_menu_macos
+      sha256: "2535e151c19d438294ead5b2e1a7cf0a8459ddabe7f4ed19cac65b3e45523f54"
+      url: "https://pub.dev"
+    source: hosted
+    version: "0.1.1"
+  desktop_context_menu_platform_interface:
+    dependency: transitive
+    description:
+      name: desktop_context_menu_platform_interface
+      sha256: "13c2ebd9185c2a748d6572dbcd418760b274b1a410f8e84a82c78424fc2b8da0"
+      url: "https://pub.dev"
+    source: hosted
+    version: "0.1.1"
+  desktop_context_menu_windows:
+    dependency: transitive
+    description:
+      name: desktop_context_menu_windows
+      sha256: "315127bc8066a4a7c49790b226fb523af17e1bec5213566daae41bcca27b2bad"
+      url: "https://pub.dev"
+    source: hosted
+    version: "0.1.1"
   dio:
     dependency: transitive
     description:

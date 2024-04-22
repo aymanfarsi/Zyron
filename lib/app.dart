@@ -6,6 +6,7 @@ import 'package:launch_at_startup/launch_at_startup.dart';
 import 'package:tray_manager/tray_manager.dart';
 import 'package:window_manager/window_manager.dart';
 import 'package:zyron/providers/app_settings_provider.dart';
+import 'package:zyron/providers/youtube_provider.dart';
 import 'package:zyron/views/skeleton.dart';
 
 class AppFrame extends ConsumerStatefulWidget {
@@ -49,23 +50,22 @@ class AppFrameState extends ConsumerState<AppFrame>
 
   Future<bool> _initAppSettings() async {
     final appSettings = ref.read(appSettingsProvider);
+    final ytList = ref.read(youTubeListProvider);
 
     try {
-      // ! Always on top
+      // ! App settings
+      await ref.read(appSettingsProvider.notifier).loadSettings();
       await windowManager.setAlwaysOnTop(appSettings.isAlwaysOnTop);
-
-      // ! Prevent close
       await windowManager.setPreventClose(appSettings.isPreventClose);
-
-      // ! Auto start
       if (appSettings.isAutoStart) {
         await launchAtStartup.enable();
       } else {
         await launchAtStartup.disable();
       }
 
-      // ! App settings
-      await ref.read(appSettingsProvider.notifier).loadSettings();
+      // ! YouTube channels
+      await ref.read(youTubeListProvider.notifier).loadChannels();
+      debugPrint('${ytList.length} Channel(s) loaded');
 
       return true;
     } catch (e) {
@@ -85,6 +85,13 @@ class AppFrameState extends ConsumerState<AppFrame>
           return Scaffold(
             body: Center(
               child: Text('Error: ${snapshot.error}'),
+            ),
+          );
+        }
+        if (snapshot.hasData && snapshot.data == false) {
+          return const Scaffold(
+            body: Center(
+              child: Text('Error initializing app settings'),
             ),
           );
         }

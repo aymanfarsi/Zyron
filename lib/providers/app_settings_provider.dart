@@ -10,7 +10,7 @@ import 'package:zyron/models/player_settings_model.dart';
 
 part 'app_settings_provider.g.dart';
 
-@riverpod
+@Riverpod(keepAlive: true)
 class AppSettings extends _$AppSettings {
   @override
   AppSettingsModel build() {

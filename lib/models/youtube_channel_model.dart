@@ -10,6 +10,7 @@ class YouTubeChannelModel with _$YouTubeChannelModel {
     required String name,
     required String url,
     required String logo,
+    required int subscribers,
   }) = _YouTubeChannelModel;
 
   factory YouTubeChannelModel.fromJson(Map<String, dynamic> json) =>
