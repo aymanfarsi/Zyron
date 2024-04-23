@@ -114,26 +114,6 @@ Future<void> main() async {
   );
   await trayManager.setContextMenu(menu);
 
-  // ! Initialize the Windows Taskbar
-  try {
-    await WindowsTaskbar.setThumbnailTooltip('Zyron');
-    await WindowsTaskbar.resetThumbnailToolbar();
-    await WindowsTaskbar.setThumbnailToolbar(
-      [
-        ThumbnailToolbarButton(
-          ThumbnailToolbarAssetIcon('assets/zyron_icon.ico'),
-          'App Icon',
-          () async {
-            debugPrint('ThumbnailToolbarButton clicked');
-          },
-          mode: ThumbnailToolbarButtonMode.noBackground,
-        ),
-      ],
-    );
-  } catch (e) {
-    debugPrint('Initialize the Windows Taskbar Error: $e');
-  }
-
   // ! Initialize the window manager
   await windowManager.ensureInitialized();
   WindowOptions windowOptions = const WindowOptions(
@@ -147,6 +127,26 @@ Future<void> main() async {
   windowManager.waitUntilReadyToShow(windowOptions, () async {
     await windowManager.show();
     await windowManager.focus();
+
+    // ! Initialize the Windows Taskbar
+    try {
+      await WindowsTaskbar.setThumbnailTooltip('Zyron');
+      await WindowsTaskbar.resetThumbnailToolbar();
+      await WindowsTaskbar.setThumbnailToolbar(
+        [
+          ThumbnailToolbarButton(
+            ThumbnailToolbarAssetIcon('assets/zyron_icon.ico'),
+            'App Icon',
+            () async {
+              debugPrint('ThumbnailToolbarButton clicked');
+            },
+            // mode: ThumbnailToolbarButtonMode.noBackground,
+          ),
+        ],
+      );
+    } catch (e) {
+      debugPrint('Initialize the Windows Taskbar Error: $e');
+    }
   });
 
   // ! Run the app

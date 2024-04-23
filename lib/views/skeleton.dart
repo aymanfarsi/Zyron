@@ -57,21 +57,29 @@ class _AppSkeletonState extends ConsumerState<AppSkeleton> {
                       children: <Widget>[
                         Padding(
                           padding: const EdgeInsets.all(9.0),
-                          child: GestureDetector(
-                            onTap: () {
-                              ref
-                                  .read(appSettingsProvider.notifier)
-                                  .setAlwaysOnTop(!appSettings.isAlwaysOnTop);
-                            },
-                            child: Container(
-                              height: 32.0,
-                              width: 32.0,
-                              decoration: BoxDecoration(
-                                color: Colors.yellow,
-                                shape: BoxShape.circle,
-                              ),
+                          child: CircleAvatar(
+                            backgroundColor: Colors.transparent,
+                            radius: 16.0,
+                            child: Image.asset(
+                              'assets/zyron_icon.ico',
+                              fit: BoxFit.cover,
                             ),
                           ),
+                          // child: GestureDetector(
+                          //   onTap: () {
+                          //     ref
+                          //         .read(appSettingsProvider.notifier)
+                          //         .setAlwaysOnTop(!appSettings.isAlwaysOnTop);
+                          //   },
+                          //   child: Container(
+                          //     height: 32.0,
+                          //     width: 32.0,
+                          //     decoration: BoxDecoration(
+                          //       color: Colors.yellow,
+                          //       shape: BoxShape.circle,
+                          //     ),
+                          //   ),
+                          // ),
                         ),
                         SizedBox(
                           width: constraints.maxWidth - 189.0,

@@ -13,7 +13,7 @@ class ListChannels extends HookConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final selectedIndex = useState(0);
+    final selectedIndex = useState<int?>(null);
     final ytList = ref.watch(youTubeListProvider);
 
     final ValueNotifier<YouTubeVideoModel?> selectedVideo = useState(null);
@@ -75,7 +75,7 @@ class ListChannels extends HookConsumerWidget {
                       onTap: () async {
                         selectedIndex.value = index;
                         await ref.read(videosListProvider.notifier).fetchVideos(
-                            channelId: ytList[selectedIndex.value].id);
+                            channelId: ytList[selectedIndex.value!].id);
                       },
                     ),
                   ),

@@ -1,6 +1,7 @@
 import 'package:fluent_ui/fluent_ui.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:gap/gap.dart';
+import 'package:go_router/go_router.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:zyron/providers/app_settings_provider.dart';
 import 'package:zyron/src/variables.dart';
@@ -14,6 +15,8 @@ class SettingsView extends HookConsumerWidget {
     final appSettings = ref.watch(appSettingsProvider);
     final mpvController =
         useTextEditingController(text: appSettings.playerSettings.mpvExe);
+    final focusNode = useFocusNode();
+    final expendAll = useState(true);
 
     return Container(
       decoration: boxDecoration,
@@ -31,7 +34,7 @@ class SettingsView extends HookConsumerWidget {
               SizedBox(
                 height: 40.0,
                 child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  mainAxisAlignment: MainAxisAlignment.start,
                   children: [
                     const Text(
                       'Settings View',
@@ -40,6 +43,25 @@ class SettingsView extends HookConsumerWidget {
                         fontWeight: FontWeight.bold,
                       ),
                     ),
+                    const Spacer(),
+                    Button(
+                      onPressed: () {
+                        expendAll.value = true;
+                      },
+                      child: const Text(
+                        'Expand All',
+                      ),
+                    ),
+                    const Gap(8.0),
+                    Button(
+                      onPressed: () {
+                        expendAll.value = false;
+                      },
+                      child: const Text(
+                        'Collapse All',
+                      ),
+                    ),
+                    const Gap(8.0),
                     Button(
                       onPressed: () async {
                         await ref
@@ -49,13 +71,14 @@ class SettingsView extends HookConsumerWidget {
                       child: const Text(
                         'Save',
                       ),
-                    )
+                    ),
                   ],
                 ),
               ),
               const Gap(16.0),
               _Section(
                 header: 'App',
+                isExpanded: expendAll.value,
                 items: [
                   _SettingItem(
                     title: 'Theme mode',
@@ -143,11 +166,13 @@ class SettingsView extends HookConsumerWidget {
               const Gap(16.0),
               _Section(
                 header: 'Player',
+                isExpanded: expendAll.value,
                 items: [
                   _SettingItem(
                     title: 'MPV executable',
                     subtitle: 'MPV executable name',
                     child: TextBox(
+                      focusNode: focusNode,
                       controller: mpvController,
                       placeholder: 'MPV executable',
                       decoration: boxDecoration.copyWith(
@@ -156,7 +181,7 @@ class SettingsView extends HookConsumerWidget {
                         ),
                         borderRadius: BorderRadius.circular(8.0),
                       ),
-                      onSubmitted: (value) async {
+                      onSubmitted: (value) {
                         ref
                             .read(appSettingsProvider.notifier)
                             .setPlayerMpvExe(value);
@@ -164,10 +189,12 @@ class SettingsView extends HookConsumerWidget {
                       suffix: IconButton(
                         icon: const Icon(FluentIcons.save),
                         style: const ButtonStyle(),
-                        onPressed: () async {
+                        onPressed: () {
                           ref
                               .read(appSettingsProvider.notifier)
                               .setPlayerMpvExe(mpvController.text);
+
+                          focusNode.unfocus();
                         },
                       ),
                     ),
@@ -178,6 +205,7 @@ class SettingsView extends HookConsumerWidget {
               // ! Misc
               _Section(
                 header: 'Misc',
+                isExpanded: expendAll.value,
                 items: [
                   // ! Export settings
                   _SettingItem(
@@ -213,17 +241,53 @@ class SettingsView extends HookConsumerWidget {
                   _SettingItem(
                     title: 'Reset settings',
                     subtitle: 'Reset all settings',
-                    child: Button(
-                      onPressed: () async {
-                        // Confirm reset
-                      },
-                      style: ButtonStyle(
-                        backgroundColor: ButtonState.all(
-                          Colors.red,
+                    child: MouseRegion(
+                      cursor: SystemMouseCursors.forbidden,
+                      child: Button(
+                        onPressed: () async {
+                          await showDialog(
+                            context: context,
+                            builder: (context) {
+                              return ContentDialog(
+                                title: const Text('Reset settings'),
+                                content: const Text(
+                                  '''Are you sure you want to reset all settings?
+This action will reset all app and player settings to default.
+Save after reset to apply changes.''',
+                                ),
+                                actions: <Widget>[
+                                  Button(
+                                    onPressed: () {
+                                      context.pop();
+                                    },
+                                    child: const Text('Confirm'),
+                                  ),
+                                  Button(
+                                    onPressed: () {
+                                      ref
+                                          .read(appSettingsProvider.notifier)
+                                          .reset();
+                                      context.pop();
+                                    },
+                                    style: ButtonStyle(
+                                      backgroundColor:
+                                          ButtonState.all(Colors.red),
+                                    ),
+                                    child: const Text('Close'),
+                                  ),
+                                ],
+                              );
+                            },
+                          );
+                        },
+                        style: ButtonStyle(
+                          backgroundColor: ButtonState.all(
+                            Colors.red,
+                          ),
                         ),
-                      ),
-                      child: const Text(
-                        'Reset',
+                        child: const Text(
+                          'Reset',
+                        ),
                       ),
                     ),
                   ),
@@ -276,15 +340,20 @@ class _SettingItem extends StatelessWidget {
 }
 
 class _Section extends StatelessWidget {
-  const _Section({required this.header, required this.items});
+  const _Section({
+    required this.header,
+    required this.isExpanded,
+    required this.items,
+  });
 
   final String header;
+  final bool isExpanded;
   final List<Widget> items;
 
   @override
   Widget build(BuildContext context) {
     return Expander(
-      initiallyExpanded: true,
+      initiallyExpanded: isExpanded,
       contentBackgroundColor: Colors.transparent,
       contentShape: (open) {
         return const RoundedRectangleBorder(side: BorderSide.none);
