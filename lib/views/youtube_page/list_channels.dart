@@ -25,8 +25,9 @@ class ListChannels extends HookConsumerWidget {
               physics: const BouncingScrollPhysics(),
             ),
             child: ListView.builder(
-              shrinkWrap: true,
+              shrinkWrap: false,
               itemCount: ytList.length,
+              scrollDirection: Axis.vertical,
               itemBuilder: (context, index) {
                 return MouseRegion(
                   cursor: SystemMouseCursors.basic,
@@ -36,7 +37,7 @@ class ListChannels extends HookConsumerWidget {
                       borderRadius: BorderRadius.all(Radius.circular(8.0)),
                     ),
                     color: selectedIndex.value == index
-                        ? Colors.grey[200]
+                        ? Colors.amber.withOpacity(0.2)
                         : Colors.transparent,
                     child: ListTile(
                       visualDensity: VisualDensity.compact,

@@ -25,7 +25,7 @@ class _TwitchViewState extends State<TwitchView> {
               physics: const BouncingScrollPhysics(),
             ),
             child: ListView.builder(
-              shrinkWrap: true,
+              shrinkWrap: false,
               itemCount: 10,
               itemBuilder: (context, index) {
                 return Card(

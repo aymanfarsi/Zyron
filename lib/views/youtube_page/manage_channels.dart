@@ -1,6 +1,9 @@
+// ignore_for_file: use_build_context_synchronously
+
 import 'package:desktop_context_menu/desktop_context_menu.dart';
-import 'package:fluent_ui/fluent_ui.dart';
-// import 'package:flutter/material.dart';
+import 'package:fluent_ui/fluent_ui.dart'
+    show ContentDialog, Button, ButtonStyle, ButtonState, Card;
+import 'package:flutter/material.dart' hide ButtonStyle, Card;
 import 'package:go_router/go_router.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:zyron/providers/youtube_provider.dart';
@@ -13,62 +16,32 @@ class ManageChannels extends HookConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final ytList = ref.watch(youTubeListProvider);
 
-    return ScrollConfiguration(
-      behavior: ScrollConfiguration.of(context).copyWith(
-        scrollbars: false,
-        physics: const BouncingScrollPhysics(),
-      ),
-      child: GridView.builder(
-        gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-          crossAxisCount: MediaQuery.of(context).size.width ~/ 200,
-          crossAxisSpacing: 8.0,
-          mainAxisSpacing: 8.0,
+    return Padding(
+      padding: const EdgeInsets.all(8.0),
+      child: ScrollConfiguration(
+        behavior: ScrollConfiguration.of(context).copyWith(
+          scrollbars: false,
+          physics: const BouncingScrollPhysics(),
         ),
-        shrinkWrap: true,
-        itemCount: ytList.length,
-        itemBuilder: (context, index) {
-          return MouseRegion(
-            cursor: SystemMouseCursors.basic,
-            child: SizedBox(
-              width: 200.0,
+        child: GridView.builder(
+          gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+            crossAxisCount: MediaQuery.of(context).size.width ~/ 200,
+            crossAxisSpacing: 8.0,
+            mainAxisSpacing: 8.0,
+            childAspectRatio: 2.5,
+          ),
+          shrinkWrap: false,
+          itemCount: ytList.length,
+          itemBuilder: (context, index) {
+            return MouseRegion(
+              cursor: SystemMouseCursors.basic,
               child: GestureDetector(
                 onSecondaryTap: () async {
-                  await showContextMenu(
+                  final item = await showContextMenu(
                     menuItems: [
                       ContextMenuItem(
                         title: 'Remove',
-                        onTap: () async {
-                          await showDialog(
-                            context: context,
-                            builder: (context) {
-                              return ContentDialog(
-                                title: const Text('Remove Channel'),
-                                content: const Text(
-                                    'Are you sure you want to remove this channel?'),
-                                actions: <Widget>[
-                                  Button(
-                                    onPressed: () {
-                                      context.pop();
-                                    },
-                                    child: const Text('Cancel'),
-                                  ),
-                                  Button(
-                                    onPressed: () async {
-                                      await ref
-                                          .read(youTubeListProvider.notifier)
-                                          .removeChannel(ytList[index]);
-                                    },
-                                    style: ButtonStyle(
-                                      backgroundColor:
-                                          ButtonState.all(Colors.red),
-                                    ),
-                                    child: const Text('Remove'),
-                                  ),
-                                ],
-                              );
-                            },
-                          );
-                        },
+                        onTap: () async {},
                       ),
                       const ContextMenuSeparator(),
                       ContextMenuItem(
@@ -77,10 +50,44 @@ class ManageChannels extends HookConsumerWidget {
                       ),
                     ],
                   );
+                  if (item != null && item.title == 'Remove') {
+                    await showDialog(
+                      context: context,
+                      builder: (context) {
+                        return ContentDialog(
+                          title: const Text('Remove Channel'),
+                          content: Text(
+                            'Are you sure you want to remove ${ytList[index].name}?',
+                          ),
+                          actions: <Widget>[
+                            Button(
+                              onPressed: () {
+                                context.pop();
+                              },
+                              child: const Text('Cancel'),
+                            ),
+                            Button(
+                              onPressed: () async {
+                                await ref
+                                    .read(youTubeListProvider.notifier)
+                                    .removeChannel(ytList[index]);
+                                context.pop();
+                              },
+                              style: ButtonStyle(
+                                backgroundColor: ButtonState.all(Colors.red),
+                              ),
+                              child: const Text('Remove'),
+                            ),
+                          ],
+                        );
+                      },
+                    );
+                  }
                 },
                 child: Card(
+                  borderRadius: BorderRadius.circular(12.0),
+                  padding: const EdgeInsets.all(8.0),
                   child: ListTile(
-                    contentPadding: const EdgeInsets.symmetric(horizontal: 8.0),
                     title: Text(
                       ytList[index].name,
                       style: const TextStyle(
@@ -97,6 +104,7 @@ class ManageChannels extends HookConsumerWidget {
                       ),
                     ),
                     leading: CircleAvatar(
+                      radius: 15.0,
                       backgroundImage: NetworkImage(
                         ytList[index].logo,
                       ),
@@ -104,9 +112,9 @@ class ManageChannels extends HookConsumerWidget {
                   ),
                 ),
               ),
-            ),
-          );
-        },
+            );
+          },
+        ),
       ),
     );
   }
