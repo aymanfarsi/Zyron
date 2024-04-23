@@ -1,5 +1,5 @@
 import 'package:fluent_ui/fluent_ui.dart' hide ListTile, Card, Colors;
-import 'package:flutter/material.dart' hide ButtonStyle, Divider;
+import 'package:flutter/material.dart' hide ButtonStyle, Divider, Tooltip;
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:gap/gap.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
@@ -163,14 +163,17 @@ class ListChannels extends HookConsumerWidget {
                                 fit: BoxFit.cover,
                               ),
                             ),
-                            title: Text(
-                              videos[index].title,
-                              style: const TextStyle(
-                                fontWeight: FontWeight.bold,
-                                fontSize: 14.0,
+                            title: Tooltip(
+                              message: videos[index].title,
+                              child: Text(
+                                videos[index].title,
+                                style: const TextStyle(
+                                  fontWeight: FontWeight.bold,
+                                  fontSize: 14.0,
+                                ),
+                                overflow: TextOverflow.ellipsis,
+                                maxLines: 1,
                               ),
-                              overflow: TextOverflow.ellipsis,
-                              maxLines: 1,
                             ),
                             subtitle: Text(
                               formatDuration(videos[index].duration),
@@ -229,7 +232,7 @@ class ListChannels extends HookConsumerWidget {
                           },
                         ),
                         Container(
-                          padding: const EdgeInsets.all(8.0),
+                          // padding: const EdgeInsets.all(8.0),
                           decoration: const BoxDecoration(
                             borderRadius: BorderRadius.only(
                               topLeft: Radius.circular(12.0),
@@ -240,12 +243,12 @@ class ListChannels extends HookConsumerWidget {
                               ? const Placeholder()
                               : Image.network(
                                   selectedVideo.value!.highResThumbnail,
-                                  fit: BoxFit.cover,
+                                  fit: BoxFit.fitWidth,
                                 ),
                         ),
                         Button(
                           child: const Text(
-                            'Play',
+                            'Watch',
                           ),
                           onPressed: () async {
                             await watchVideo(
