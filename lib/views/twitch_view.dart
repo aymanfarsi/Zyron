@@ -18,7 +18,7 @@ class _TwitchViewState extends State<TwitchView> {
       mainAxisAlignment: MainAxisAlignment.start,
       children: [
         SizedBox(
-          width: 150.0,
+          width: 175.0,
           child: ScrollConfiguration(
             behavior: ScrollConfiguration.of(context).copyWith(
               scrollbars: false,
@@ -33,6 +33,9 @@ class _TwitchViewState extends State<TwitchView> {
                   shape: const RoundedRectangleBorder(
                     borderRadius: BorderRadius.all(Radius.circular(8.0)),
                   ),
+                  color: selectedIndex == index
+                      ? Colors.grey[200]
+                      : Colors.transparent,
                   child: Tooltip(
                     richMessage: TextSpan(
                       children: [
@@ -61,7 +64,6 @@ class _TwitchViewState extends State<TwitchView> {
                       focusColor: Colors.transparent,
                       hoverColor: Colors.transparent,
                       selected: selectedIndex == index,
-                      selectedColor: Colors.yellow,
                       contentPadding:
                           const EdgeInsets.symmetric(horizontal: 8.0),
                       title: const Text(
@@ -101,7 +103,7 @@ class _TwitchViewState extends State<TwitchView> {
         ),
         const Gap(9.0),
         Container(
-          width: MediaQuery.of(context).size.width - 236.0,
+          width: MediaQuery.of(context).size.width - 261.0,
           decoration: boxDecoration,
           child: Center(
             child: Text('Twitch Channel ${selectedIndex + 1}'),

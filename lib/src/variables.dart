@@ -7,7 +7,7 @@ import 'package:zyron/views/anime_view.dart';
 import 'package:zyron/views/help_view.dart';
 import 'package:zyron/views/settings_view.dart';
 import 'package:zyron/views/twitch_view.dart';
-import 'package:zyron/views/youtube_view.dart';
+import 'package:zyron/views/youtube_page/youtube_view.dart';
 
 // ! Twitch API
 late final String twitchClientId;

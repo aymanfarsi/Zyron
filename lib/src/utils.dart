@@ -2,6 +2,20 @@ import 'dart:io';
 
 import 'package:win32_registry/win32_registry.dart';
 
+String formatSubscribers(int subscribers) {
+  if (subscribers == -1) {
+    return 'Unknown';
+  } else if (subscribers < 1000) {
+    return '$subscribers';
+  } else if (subscribers < 1000000) {
+    return '${(subscribers / 1000).toStringAsFixed(1)}K';
+  } else if (subscribers < 1000000000) {
+    return '${(subscribers / 1000000).toStringAsFixed(1)}M';
+  } else {
+    return '${(subscribers / 1000000000).toStringAsFixed(1)}B';
+  }
+}
+
 Future<void> register(String scheme) async {
   String appPath = Platform.resolvedExecutable;
 

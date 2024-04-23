@@ -79,6 +79,7 @@ class YouTubeList extends _$YouTubeList {
   void decodeChannels(String json) {
     final List<dynamic> decodedJson = jsonDecode(json);
     state = decodedJson.map((c) => YouTubeChannelModel.fromJson(c)).toList();
+    debugPrint('${state.length} Channel(s) loaded');
   }
 
   Future<void> saveChannels() async {

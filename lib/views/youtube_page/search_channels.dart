@@ -4,41 +4,14 @@ import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:gap/gap.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:zyron/providers/youtube_provider.dart';
+import 'package:zyron/src/utils.dart';
 import 'package:zyron/views/components.dart';
+import 'package:zyron/views/youtube_page/youtube_view.dart';
 
-enum YouTubeViewType {
-  start,
-  searching,
-  results;
+class SearchChannel extends HookConsumerWidget {
+  const SearchChannel({super.key});
 
-  String get message {
-    switch (this) {
-      case YouTubeViewType.start:
-        return 'Search YouTube';
-      case YouTubeViewType.searching:
-        return 'Searching...';
-      case YouTubeViewType.results:
-        return 'No results found';
-    }
-  }
-}
-
-class YouTubeView extends HookConsumerWidget {
-  const YouTubeView({super.key});
-
-  String _formatSubscribers(int subscribers) {
-    if (subscribers == -1) {
-      return 'Subscribers: Unknown';
-    } else if (subscribers < 10e3) {
-      return 'Subscribers: $subscribers';
-    } else if (subscribers < 10e6) {
-      double sub = subscribers / 10e3;
-      return 'Subscribers: ${sub.toStringAsFixed(1)}K';
-    } else {
-      double sub = subscribers / 10e6;
-      return 'Subscribers: ${sub.toStringAsFixed(1)}M';
-    }
-  }
+  
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -94,7 +67,7 @@ class YouTubeView extends HookConsumerWidget {
             ],
           ),
           SizedBox(
-            height: MediaQuery.of(context).size.height - 136,
+            height: MediaQuery.of(context).size.height - 174.1,
             width: MediaQuery.of(context).size.width,
             child: searchList.value.isEmpty
                 ? Center(
@@ -141,7 +114,7 @@ class YouTubeView extends HookConsumerWidget {
                           ),
                           title: Text(channel.name),
                           subtitle: Text(
-                            _formatSubscribers(channel.subscribers),
+                            formatSubscribers(channel.subscribers),
                           ),
                         ),
                       );

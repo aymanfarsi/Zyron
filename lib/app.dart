@@ -50,7 +50,6 @@ class AppFrameState extends ConsumerState<AppFrame>
 
   Future<bool> _initAppSettings() async {
     final appSettings = ref.read(appSettingsProvider);
-    final ytList = ref.read(youTubeListProvider);
 
     try {
       // ! App settings
@@ -65,7 +64,6 @@ class AppFrameState extends ConsumerState<AppFrame>
 
       // ! YouTube channels
       await ref.read(youTubeListProvider.notifier).loadChannels();
-      debugPrint('${ytList.length} Channel(s) loaded');
 
       return true;
     } catch (e) {
