@@ -1,7 +1,6 @@
 import 'package:fluent_ui/fluent_ui.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:gap/gap.dart';
-import 'package:go_router/go_router.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:zyron/providers/youtube_provider.dart';
 import 'package:zyron/src/utils.dart';
@@ -65,8 +64,8 @@ class SearchChannel extends HookConsumerWidget {
             ],
           ),
           SizedBox(
-            height: MediaQuery.of(context).size.height - 174.1,
             width: MediaQuery.of(context).size.width,
+            height: MediaQuery.of(context).size.height - 174.1,
             child: searchList.value.isEmpty
                 ? Center(
                     child: Text(
@@ -77,34 +76,36 @@ class SearchChannel extends HookConsumerWidget {
                       ),
                     ),
                   )
-                : ListView.builder(
-                  shrinkWrap: false,
-                    itemCount: searchList.value.length,
-                    itemBuilder: (context, index) {
-                      final channel = searchList.value[index];
-                      return ListTile(
-                        leading: CircleAvatar(
-                          backgroundImage: channel.logo.isEmpty
-                              ? null
-                              : NetworkImage(channel.logo),
-                          backgroundColor: Colors.transparent,
-                        ),
-                        title: Text(channel.name),
-                        subtitle: Text(
-                          formatSubscribers(channel.subscribers),
-                        ),
-                        trailing: IconButton(
-                          icon: const Icon(FluentIcons.add),
-                          onPressed: () async {
-                            await ref
-                                .read(youTubeListProvider.notifier)
-                                .addChannel(channel);
-                            // ignore: use_build_context_synchronously
-                            context.pop();
-                          },
-                        ),
-                      );
-                    },
+                : Padding(
+                    padding: EdgeInsets.symmetric(
+                        horizontal: MediaQuery.of(context).size.width * 0.05),
+                    child: ListView.builder(
+                      shrinkWrap: false,
+                      itemCount: searchList.value.length,
+                      itemBuilder: (context, index) {
+                        final channel = searchList.value[index];
+                        return ListTile(
+                          leading: CircleAvatar(
+                            backgroundImage: channel.logo.isEmpty
+                                ? null
+                                : NetworkImage(channel.logo),
+                            backgroundColor: Colors.transparent,
+                          ),
+                          title: Text(channel.name),
+                          subtitle: Text(
+                            formatSubscribers(channel.subscribers),
+                          ),
+                          trailing: IconButton(
+                            icon: const Icon(FluentIcons.add),
+                            onPressed: () async {
+                              await ref
+                                  .read(youTubeListProvider.notifier)
+                                  .addChannel(channel);
+                            },
+                          ),
+                        );
+                      },
+                    ),
                   ),
           ),
         ],
