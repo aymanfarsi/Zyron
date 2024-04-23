@@ -10,12 +10,15 @@ Future<void> watchVideo(
 ) async {
   await Process.run(player.mpvExe, [
     '--no-terminal',
+    if (player.isAutoPlay) '--pause',
+    if (player.exitOnDone) '--keep-open=yes',
+    if (player.quality.isNotEmpty) '--ytdl-format=${player.quality}',
+    '--volume=${player.volume}',
     // '--force-window',
     // '--ontop',
     // '--no-border',
     // '--no-input-default-bindings',
     // '--input-ipc-server=${player.mpvSocket}',
-    '--ytdl-format=best',
     video.url,
   ]);
 }

@@ -43,11 +43,11 @@ class AppSettings extends _$AppSettings {
     );
   }
 
-  void setPlayerMuted(bool isMuted) {
-    state = state.copyWith(
-      playerSettings: state.playerSettings.copyWith(isMuted: isMuted),
-    );
-  }
+  // void setPlayerMuted(bool isMuted) {
+  //   state = state.copyWith(
+  //     playerSettings: state.playerSettings.copyWith(isMuted: isMuted),
+  //   );
+  // }
 
   void setPlayerVolume(double volume) {
     state = state.copyWith(
@@ -110,7 +110,7 @@ class AppSettings extends _$AppSettings {
       startingPage: 0,
       playerSettings: PlayerSettingsModel(
         quality: 'best',
-        isMuted: false,
+        // isMuted: false,
         volume: 75,
         exitOnDone: false,
         mpvExe: 'mpv',

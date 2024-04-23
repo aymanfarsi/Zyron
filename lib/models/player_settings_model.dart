@@ -7,7 +7,7 @@ part 'player_settings_model.g.dart';
 class PlayerSettingsModel with _$PlayerSettingsModel {
   factory PlayerSettingsModel({
     required String quality,
-    required bool isMuted,
+    // required bool isMuted,
     required double volume,
     required bool exitOnDone,
     required String mpvExe,
