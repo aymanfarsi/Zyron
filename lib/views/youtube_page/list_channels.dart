@@ -141,6 +141,12 @@ class ListChannels extends HookConsumerWidget {
                                 fontSize: 12.0,
                               ),
                             ),
+                            trailing: Text(
+                              formatPublishedDate(videos[index].publishedDate),
+                              style: const TextStyle(
+                                fontSize: 12.0,
+                              ),
+                            ),
                             onTap: () {
                               selectedVideo.value = videos[index];
                             },

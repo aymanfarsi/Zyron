@@ -10,10 +10,11 @@ Future<void> watchVideo(
 ) async {
   await Process.run(player.mpvExe, [
     '--no-terminal',
-    if (player.isAutoPlay) '--pause',
+    '--pause=${player.isAutoPlay ? 'no' : 'yes'}',
     if (player.exitOnDone) '--keep-open=yes',
     if (player.quality.isNotEmpty) '--ytdl-format=${player.quality}',
     '--volume=${player.volume}',
+    '--title=${video.title}',
     // '--force-window',
     // '--ontop',
     // '--no-border',
@@ -23,6 +24,25 @@ Future<void> watchVideo(
   ]);
 }
 
+String formatPublishedDate(DateTime? publishedDate) {
+  if (publishedDate == null) {
+    return 'Unknown';
+  }
+  final now = DateTime.now();
+  final difference = now.difference(publishedDate);
+  if (difference.inDays > 365) {
+    return '${publishedDate.year}';
+  } else if (difference.inDays > 30) {
+    return '${publishedDate.month}/${publishedDate.year}';
+  } else if (difference.inDays > 0) {
+    return '${publishedDate.day}/${publishedDate.month}';
+  } else if (difference.inHours > 0) {
+    return '${publishedDate.hour}:${publishedDate.minute}';
+  } else {
+    return '${difference.inMinutes}m';
+  }
+}
+
 String formatDuration(Duration? duration) {
   if (duration == null) {
     return 'Unknown';
@@ -30,7 +50,11 @@ String formatDuration(Duration? duration) {
   String twoDigits(int n) => n.toString().padLeft(2, '0');
   String twoDigitMinutes = twoDigits(duration.inMinutes.remainder(60));
   String twoDigitSeconds = twoDigits(duration.inSeconds.remainder(60));
-  return '${twoDigits(duration.inHours)}:$twoDigitMinutes:$twoDigitSeconds';
+  String formattedDuration = '';
+  if (duration.inHours > 0) {
+    formattedDuration = '${twoDigits(duration.inHours)}:';
+  }
+  return '$formattedDuration$twoDigitMinutes:$twoDigitSeconds';
 }
 
 String formatSubscribers(int subscribers) {
