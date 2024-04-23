@@ -9,6 +9,7 @@ class YouTubeVideoModel with _$YouTubeVideoModel {
     required String id,
     required String title,
     required Duration? duration,
+    required DateTime? uploadedDate,
     required DateTime? publishedDate,
     required String highResThumbnail,
     required String url,

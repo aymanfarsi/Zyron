@@ -183,6 +183,7 @@ class ListChannels extends HookConsumerWidget {
                             ),
                             trailing: Text(
                               formatPublishedDate(videos[index].publishedDate),
+                              // videos[index].uploadedDate.toString(),
                               style: const TextStyle(
                                 fontSize: 12.0,
                               ),

@@ -46,6 +46,7 @@ class VideosList extends _$VideosList {
         id: video.id.value,
         title: video.title,
         duration: video.duration,
+        uploadedDate: video.uploadDate,
         publishedDate: video.uploadDate,
         highResThumbnail: video.thumbnails.highResUrl,
         url: 'https://www.youtube.com/watch?v=${video.id.value}',
