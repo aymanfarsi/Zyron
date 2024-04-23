@@ -66,6 +66,36 @@ enum AppPages {
         return const HelpView();
     }
   }
+
+  int get idx {
+    switch (this) {
+      case AppPages.youtube:
+        return 0;
+      case AppPages.twitch:
+        return 1;
+      case AppPages.anime:
+        return 2;
+      case AppPages.settings:
+        return 3;
+      case AppPages.help:
+        return 4;
+    }
+  }
+
+  String get name {
+    switch (this) {
+      case AppPages.youtube:
+        return 'YouTube';
+      case AppPages.twitch:
+        return 'Twitch';
+      case AppPages.anime:
+        return 'Anime';
+      case AppPages.settings:
+        return 'Settings';
+      case AppPages.help:
+        return 'Help';
+    }
+  }
 }
 
 // ! GoRouter configuration
