@@ -63,7 +63,10 @@ class YouTubeList extends _$YouTubeList {
     await saveChannels();
   }
 
-  Future<void> reorderChannel(int oldIndex, int newIndex) async {
+  Future<void> reorderChannel({
+    required int oldIndex,
+    required int newIndex,
+  }) async {
     if (oldIndex == newIndex) {
       debugPrint('Same index');
       return;

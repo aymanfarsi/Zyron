@@ -12,9 +12,13 @@ Future<void> watchVideo(
     '--no-terminal',
     '--pause=${player.isAutoPlay ? 'no' : 'yes'}',
     if (player.exitOnDone) '--keep-open=yes',
-    if (player.quality.isNotEmpty) '--ytdl-format=${player.quality}',
+    player.quality.isNotEmpty
+        ? '--ytdl-format=${player.quality}'
+        : '--ytdl-format=bestvideo[height<=?1080]+bestaudio/best',
     '--volume=${player.volume}',
     '--title=${video.title}',
+    '--autofit=50%:50%',
+    '--geometry=50%:50%',
     // '--force-window',
     // '--ontop',
     // '--no-border',
@@ -35,7 +39,7 @@ String formatPublishedDate(DateTime? publishedDate) {
   } else if (difference.inDays > 30) {
     return '${publishedDate.month}/${publishedDate.year}';
   } else if (difference.inDays > 0) {
-    return '${publishedDate.day}/${publishedDate.month}';
+    return '${publishedDate.day}/${publishedDate.month.toString().padLeft(2, '0')}';
   } else if (difference.inHours > 0) {
     return '${publishedDate.hour}:${publishedDate.minute}';
   } else {
