@@ -2,6 +2,16 @@ import 'dart:io';
 
 import 'package:win32_registry/win32_registry.dart';
 
+String formatDuration(Duration? duration) {
+  if (duration == null) {
+    return 'Unknown';
+  }
+  String twoDigits(int n) => n.toString().padLeft(2, '0');
+  String twoDigitMinutes = twoDigits(duration.inMinutes.remainder(60));
+  String twoDigitSeconds = twoDigits(duration.inSeconds.remainder(60));
+  return '${twoDigits(duration.inHours)}:$twoDigitMinutes:$twoDigitSeconds';
+}
+
 String formatSubscribers(int subscribers) {
   if (subscribers == -1) {
     return 'Unknown';
