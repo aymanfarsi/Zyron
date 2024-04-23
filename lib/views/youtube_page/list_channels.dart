@@ -93,7 +93,7 @@ class ListChannels extends HookConsumerWidget {
             children: [
               Container(
                 height: MediaQuery.of(context).size.height -
-                    (selectedVideo.value == null ? 129.0 : 289.0),
+                    (selectedVideo.value == null ? 129.0 : 259.0),
                 padding: const EdgeInsets.all(8.0),
                 decoration: boxDecoration,
                 child: videoList.when(
@@ -109,6 +109,19 @@ class ListChannels extends HookConsumerWidget {
                                 BorderRadius.all(Radius.circular(8.0)),
                           ),
                           child: ListTile(
+                            leading: Container(
+                              width: 100.0,
+                              decoration: const BoxDecoration(
+                                borderRadius: BorderRadius.only(
+                                  topLeft: Radius.circular(12.0),
+                                  bottomLeft: Radius.circular(12.0),
+                                ),
+                              ),
+                              child: Image.network(
+                                videos[index].highResThumbnail,
+                                fit: BoxFit.cover,
+                              ),
+                            ),
                             title: Text(
                               videos[index].title,
                               style: const TextStyle(
@@ -122,12 +135,6 @@ class ListChannels extends HookConsumerWidget {
                               formatDuration(videos[index].duration),
                               style: const TextStyle(
                                 fontSize: 12.0,
-                              ),
-                            ),
-                            leading: CircleAvatar(
-                              radius: 15.0,
-                              backgroundImage: NetworkImage(
-                                videos[index].highResThumbnail,
                               ),
                             ),
                             onTap: () {
@@ -159,7 +166,7 @@ class ListChannels extends HookConsumerWidget {
               Visibility(
                 visible: selectedVideo.value != null,
                 child: Container(
-                  height: 151.0,
+                  height: 121.0,
                   padding: const EdgeInsets.all(8.0),
                   decoration: boxDecoration,
                   child: Center(
