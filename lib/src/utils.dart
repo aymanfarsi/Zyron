@@ -1,6 +1,24 @@
 import 'dart:io';
 
 import 'package:win32_registry/win32_registry.dart';
+import 'package:zyron/models/player_settings_model.dart';
+import 'package:zyron/models/youtube_video_model.dart';
+
+Future<void> watchVideo(
+  YouTubeVideoModel video,
+  PlayerSettingsModel player,
+) async {
+  await Process.run(player.mpvExe, [
+    '--no-terminal',
+    // '--force-window',
+    // '--ontop',
+    // '--no-border',
+    // '--no-input-default-bindings',
+    // '--input-ipc-server=${player.mpvSocket}',
+    '--ytdl-format=best',
+    video.url,
+  ]);
+}
 
 String formatDuration(Duration? duration) {
   if (duration == null) {

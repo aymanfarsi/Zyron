@@ -133,17 +133,17 @@ class AppSettings extends _$AppSettings {
     await prefs.setString('zyron_settings', encodedJson);
   }
 
-  Future<void> loadSettings() async {
+  Future<AppSettingsModel> loadSettings() async {
     final SharedPreferences prefs = await SharedPreferences.getInstance();
     String? json = prefs.getString('zyron_settings');
 
     if (json == null) {
-      reset();
-      return;
+      return reset(returnState: true)!;
     }
 
     Map<String, dynamic> decodedJson = jsonDecode(json);
     state = AppSettingsModel.fromJson(decodedJson);
+    return state;
   }
 
   Future<bool> exportSettings() async {

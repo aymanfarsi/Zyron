@@ -16,7 +16,6 @@ class SettingsView extends HookConsumerWidget {
     final mpvController =
         useTextEditingController(text: appSettings.playerSettings.mpvExe);
     final focusNode = useFocusNode();
-    final expendAll = useState(true);
 
     return Container(
       decoration: boxDecoration,
@@ -45,24 +44,6 @@ class SettingsView extends HookConsumerWidget {
                     ),
                     const Spacer(),
                     Button(
-                      onPressed: () {
-                        expendAll.value = true;
-                      },
-                      child: const Text(
-                        'Expand All',
-                      ),
-                    ),
-                    const Gap(8.0),
-                    Button(
-                      onPressed: () {
-                        expendAll.value = false;
-                      },
-                      child: const Text(
-                        'Collapse All',
-                      ),
-                    ),
-                    const Gap(8.0),
-                    Button(
                       onPressed: () async {
                         await ref
                             .read(appSettingsProvider.notifier)
@@ -78,7 +59,6 @@ class SettingsView extends HookConsumerWidget {
               const Gap(16.0),
               _Section(
                 header: 'App',
-                isExpanded: expendAll.value,
                 items: [
                   _SettingItem(
                     title: 'Theme mode',
@@ -166,11 +146,11 @@ class SettingsView extends HookConsumerWidget {
               const Gap(16.0),
               _Section(
                 header: 'Player',
-                isExpanded: expendAll.value,
                 items: [
                   _SettingItem(
                     title: 'MPV executable',
-                    subtitle: 'MPV executable name',
+                    subtitle:
+                        'MPV executable command must be accessible in PATH',
                     child: TextBox(
                       focusNode: focusNode,
                       controller: mpvController,
@@ -205,7 +185,6 @@ class SettingsView extends HookConsumerWidget {
               // ! Misc
               _Section(
                 header: 'Misc',
-                isExpanded: expendAll.value,
                 items: [
                   // ! Export settings
                   _SettingItem(
@@ -242,7 +221,7 @@ class SettingsView extends HookConsumerWidget {
                     title: 'Reset settings',
                     subtitle: 'Reset all settings',
                     child: MouseRegion(
-                      cursor: SystemMouseCursors.forbidden,
+                      cursor: SystemMouseCursors.help,
                       child: Button(
                         onPressed: () async {
                           await showDialog(
@@ -252,15 +231,19 @@ class SettingsView extends HookConsumerWidget {
                                 title: const Text('Reset settings'),
                                 content: const Text(
                                   '''Are you sure you want to reset all settings?
-This action will reset all app and player settings to default.
+This action will reset all app and player settings to default and cannot be undone.
 Save after reset to apply changes.''',
+                                  style: TextStyle(
+                                    fontSize: 12.0,
+                                  ),
+                                  textAlign: TextAlign.justify,
                                 ),
                                 actions: <Widget>[
                                   Button(
                                     onPressed: () {
                                       context.pop();
                                     },
-                                    child: const Text('Confirm'),
+                                    child: const Text('Cancel'),
                                   ),
                                   Button(
                                     onPressed: () {
@@ -273,7 +256,7 @@ Save after reset to apply changes.''',
                                       backgroundColor:
                                           ButtonState.all(Colors.red),
                                     ),
-                                    child: const Text('Close'),
+                                    child: const Text('Confirm'),
                                   ),
                                 ],
                               );
@@ -342,18 +325,16 @@ class _SettingItem extends StatelessWidget {
 class _Section extends StatelessWidget {
   const _Section({
     required this.header,
-    required this.isExpanded,
     required this.items,
   });
 
   final String header;
-  final bool isExpanded;
   final List<Widget> items;
 
   @override
   Widget build(BuildContext context) {
     return Expander(
-      initiallyExpanded: isExpanded,
+      initiallyExpanded: true,
       contentBackgroundColor: Colors.transparent,
       contentShape: (open) {
         return const RoundedRectangleBorder(side: BorderSide.none);

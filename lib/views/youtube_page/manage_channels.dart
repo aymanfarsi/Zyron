@@ -45,12 +45,13 @@ class ManageChannels extends HookConsumerWidget {
                       ),
                       const ContextMenuSeparator(),
                       ContextMenuItem(
-                        title: 'Cancel',
-                        onTap: () {},
+                        title: 'Refresh',
+                        onTap: () async {},
                       ),
                     ],
                   );
-                  if (item != null && item.title == 'Remove') {
+                  if (item == null) return;
+                  if (item.title == 'Remove') {
                     await showDialog(
                       context: context,
                       builder: (context) {
@@ -82,6 +83,11 @@ class ManageChannels extends HookConsumerWidget {
                         );
                       },
                     );
+                  }
+                  if (item.title == 'Refresh') {
+                    await ref
+                        .read(youTubeListProvider.notifier)
+                        .refreshChannel(ytList[index]);
                   }
                 },
                 child: Card(

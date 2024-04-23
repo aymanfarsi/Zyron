@@ -49,14 +49,14 @@ class AppFrameState extends ConsumerState<AppFrame>
   }
 
   Future<bool> _initAppSettings() async {
-    final appSettings = ref.read(appSettingsProvider);
-
     try {
       // ! App settings
-      await ref.read(appSettingsProvider.notifier).loadSettings();
-      await windowManager.setAlwaysOnTop(appSettings.isAlwaysOnTop);
-      await windowManager.setPreventClose(appSettings.isPreventClose);
-      if (appSettings.isAutoStart) {
+
+      final settings =
+          await ref.read(appSettingsProvider.notifier).loadSettings();
+      await windowManager.setAlwaysOnTop(settings.isAlwaysOnTop);
+      await windowManager.setPreventClose(settings.isPreventClose);
+      if (settings.isAutoStart) {
         await launchAtStartup.enable();
       } else {
         await launchAtStartup.disable();
@@ -67,6 +67,7 @@ class AppFrameState extends ConsumerState<AppFrame>
 
       return true;
     } catch (e) {
+      debugPrint('Error initializing app settings: $e');
       return false;
     }
   }
@@ -77,12 +78,17 @@ class AppFrameState extends ConsumerState<AppFrame>
       future: _initAppSettings(),
       builder: (context, snapshot) {
         if (snapshot.connectionState == ConnectionState.waiting) {
-          return const CircularProgressIndicator();
+          return const Center(
+            child: CircularProgressIndicator(),
+          );
         }
         if (snapshot.hasError) {
           return Scaffold(
             body: Center(
-              child: Text('Error: ${snapshot.error}'),
+              child: Text(
+                'Error: ${snapshot.error}',
+                textAlign: TextAlign.justify,
+              ),
             ),
           );
         }

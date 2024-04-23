@@ -12,21 +12,25 @@ part 'youtube_provider.g.dart';
 
 @Riverpod(keepAlive: true)
 class YouTubeList extends _$YouTubeList {
+  late final YoutubeHttpClient _ytHttpClient;
+  late final ChannelClient _channelClient;
+  late final SearchClient _searchClient;
+
   @override
   List<YouTubeChannelModel> build() {
+    _ytHttpClient = YoutubeHttpClient();
+    _channelClient = ChannelClient(_ytHttpClient);
+    _searchClient = SearchClient(_ytHttpClient);
     return [];
   }
 
   Future<List<YouTubeChannelModel>> search({required String query}) async {
-    final YoutubeHttpClient ytClient = YoutubeHttpClient();
-    final SearchClient searchClient = SearchClient(ytClient);
-    final channelClient = ChannelClient(ytClient);
     final SearchList results =
-        await searchClient.searchContent(query, filter: TypeFilters.channel);
+        await _searchClient.searchContent(query, filter: TypeFilters.channel);
     List<YouTubeChannelModel> channels = [];
     for (final SearchResult channel in results) {
       if (channel is SearchChannel) {
-        final Channel c = await channelClient.get(channel.id.value);
+        final Channel c = await _channelClient.get(channel.id.value);
         channels.add(YouTubeChannelModel(
           id: c.id.value,
           name: c.title,
@@ -69,6 +73,23 @@ class YouTubeList extends _$YouTubeList {
     channels.insert(newIndex, channel);
     state = channels;
     debugPrint('Channel reordered');
+    await saveChannels();
+  }
+
+  Future<void> refreshChannel(YouTubeChannelModel channel) async {
+    final Channel c = await _channelClient.get(channel.id);
+    final updatedChannel = YouTubeChannelModel(
+      id: c.id.value,
+      name: c.title,
+      url: c.url,
+      logo: c.logoUrl,
+      subscribers: c.subscribersCount ?? -1,
+    );
+    final channels = state;
+    final index = channels.indexWhere((c) => c.id == channel.id);
+    channels[index] = updatedChannel;
+    state = channels;
+    debugPrint('Channel refreshed');
     await saveChannels();
   }
 

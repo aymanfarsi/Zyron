@@ -1,8 +1,10 @@
+import 'package:fluent_ui/fluent_ui.dart' hide ListTile, Card, Colors;
 import 'package:flutter/material.dart' hide ButtonStyle;
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:gap/gap.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:zyron/models/youtube_video_model.dart';
+import 'package:zyron/providers/app_settings_provider.dart';
 import 'package:zyron/providers/videos_provider.dart';
 import 'package:zyron/providers/youtube_provider.dart';
 import 'package:zyron/src/utils.dart';
@@ -13,6 +15,8 @@ class ListChannels extends HookConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final appSettings = ref.watch(appSettingsProvider);
+
     final selectedIndex = useState<int?>(null);
     final ytList = ref.watch(youTubeListProvider);
 
@@ -170,7 +174,17 @@ class ListChannels extends HookConsumerWidget {
                   padding: const EdgeInsets.all(8.0),
                   decoration: boxDecoration,
                   child: Center(
-                    child: Text('video ${selectedVideo.value?.title}'),
+                    child: Button(
+                      child: const Text(
+                        'Play',
+                      ),
+                      onPressed: () async {
+                        await watchVideo(
+                          selectedVideo.value!,
+                          appSettings.playerSettings,
+                        );
+                      },
+                    ),
                   ),
                 ),
               ),
