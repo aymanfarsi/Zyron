@@ -2,7 +2,31 @@ import 'dart:io';
 
 import 'package:win32_registry/win32_registry.dart';
 import 'package:zyron/models/player_settings_model.dart';
+import 'package:zyron/models/twitch_streamer_model.dart';
 import 'package:zyron/models/youtube_video_model.dart';
+
+Future<void> watchStream(
+  TwitchStreamerModel streamer,
+  PlayerSettingsModel player,
+) async {
+  await Process.run(player.mpvExe, [
+    '--no-terminal',
+    if (player.exitOnDone) '--keep-open=yes',
+    player.quality.isNotEmpty
+        ? '--ytdl-format=${player.quality}'
+        : '--ytdl-format=bestvideo[height<=?1080]+bestaudio/best',
+    '--volume=${player.volume}',
+    '--title=${streamer.displayName}',
+    '--autofit=50%:50%',
+    '--geometry=50%:50%',
+    // '--force-window',
+    // '--ontop',
+    // '--no-border',
+    // '--no-input-default-bindings',
+    // '--input-ipc-server=${player.mpvSocket}',
+    'https://www.twitch.tv/${streamer.username}',
+  ]);
+}
 
 Future<void> watchVideo(
   YouTubeVideoModel video,

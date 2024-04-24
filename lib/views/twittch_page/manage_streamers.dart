@@ -6,15 +6,14 @@ import 'package:fluent_ui/fluent_ui.dart'
 import 'package:flutter/material.dart' hide ButtonStyle, Card;
 import 'package:go_router/go_router.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
-import 'package:zyron/providers/youtube_provider.dart';
-import 'package:zyron/src/utils.dart';
+import 'package:zyron/providers/twitch_provider.dart';
 
-class ManageChannels extends HookConsumerWidget {
-  const ManageChannels({super.key});
+class ManageStreamers extends HookConsumerWidget {
+  const ManageStreamers({super.key});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final ytList = ref.watch(youTubeListProvider);
+    final twitchList = ref.watch(twitchListProvider);
 
     return Padding(
       padding: const EdgeInsets.all(8.0),
@@ -23,10 +22,10 @@ class ManageChannels extends HookConsumerWidget {
           scrollbars: false,
           physics: const BouncingScrollPhysics(),
         ),
-        child: ytList.isEmpty
+        child: twitchList.isEmpty
             ? const Center(
                 child: Text(
-                  'No channels',
+                  'No streamers',
                   style: TextStyle(
                     fontWeight: FontWeight.normal,
                     fontSize: 14.0,
@@ -41,7 +40,7 @@ class ManageChannels extends HookConsumerWidget {
                   childAspectRatio: 2.5,
                 ),
                 shrinkWrap: false,
-                itemCount: ytList.length,
+                itemCount: twitchList.length,
                 itemBuilder: (context, index) {
                   return MouseRegion(
                     cursor: SystemMouseCursors.basic,
@@ -68,7 +67,7 @@ class ManageChannels extends HookConsumerWidget {
                               return ContentDialog(
                                 title: const Text('Remove Channel'),
                                 content: Text(
-                                  'Are you sure you want to remove ${ytList[index].name}?',
+                                  'Are you sure you want to remove ${twitchList[index].displayName}?',
                                 ),
                                 actions: <Widget>[
                                   Button(
@@ -80,8 +79,8 @@ class ManageChannels extends HookConsumerWidget {
                                   Button(
                                     onPressed: () async {
                                       await ref
-                                          .read(youTubeListProvider.notifier)
-                                          .removeChannel(ytList[index]);
+                                          .read(twitchListProvider.notifier)
+                                          .removeStreamer(twitchList[index]);
                                       context.pop();
                                     },
                                     style: ButtonStyle(
@@ -97,8 +96,8 @@ class ManageChannels extends HookConsumerWidget {
                         }
                         if (item.title == 'Refresh') {
                           await ref
-                              .read(youTubeListProvider.notifier)
-                              .refreshChannel(ytList[index]);
+                              .read(twitchListProvider.notifier)
+                              .refreshStreamer(twitchList[index]);
                         }
                       },
                       child: Card(
@@ -106,7 +105,7 @@ class ManageChannels extends HookConsumerWidget {
                         padding: const EdgeInsets.all(8.0),
                         child: ListTile(
                           title: Text(
-                            ytList[index].name,
+                            twitchList[index].displayName,
                             style: const TextStyle(
                               fontWeight: FontWeight.bold,
                               fontSize: 14.0,
@@ -115,7 +114,7 @@ class ManageChannels extends HookConsumerWidget {
                             maxLines: 1,
                           ),
                           subtitle: Text(
-                            formatSubscribers(ytList[index].subscribers),
+                            twitchList[index].username,
                             style: const TextStyle(
                               fontSize: 12.0,
                             ),
@@ -123,7 +122,7 @@ class ManageChannels extends HookConsumerWidget {
                           leading: CircleAvatar(
                             radius: 15.0,
                             backgroundImage: NetworkImage(
-                              ytList[index].logo,
+                              twitchList[index].profileImageUrl,
                             ),
                           ),
                         ),

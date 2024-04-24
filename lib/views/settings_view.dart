@@ -13,9 +13,14 @@ class SettingsView extends HookConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final appSettings = ref.watch(appSettingsProvider);
+
     final mpvController =
         useTextEditingController(text: appSettings.playerSettings.mpvExe);
-    final focusNode = useFocusNode();
+    final mpvFocusNode = useFocusNode();
+
+    final qualityController =
+        useTextEditingController(text: appSettings.playerSettings.quality);
+    final qualityFocusNode = useFocusNode();
 
     return Container(
       decoration: boxDecoration,
@@ -152,7 +157,7 @@ class SettingsView extends HookConsumerWidget {
                     subtitle:
                         'MPV executable command must be accessible in PATH',
                     child: TextBox(
-                      focusNode: focusNode,
+                      focusNode: mpvFocusNode,
                       controller: mpvController,
                       placeholder: 'MPV executable',
                       decoration: boxDecoration.copyWith(
@@ -174,7 +179,39 @@ class SettingsView extends HookConsumerWidget {
                               .read(appSettingsProvider.notifier)
                               .setPlayerMpvExe(mpvController.text);
 
-                          focusNode.unfocus();
+                          mpvFocusNode.unfocus();
+                        },
+                      ),
+                    ),
+                  ),
+                  _SettingItem(
+                    title: 'Quality',
+                    subtitle:
+                        'Quality settings for player (e.g. 1080p, 720p, etc.)',
+                    child: TextBox(
+                      focusNode: qualityFocusNode,
+                      controller: qualityController,
+                      placeholder: 'Quality',
+                      decoration: boxDecoration.copyWith(
+                        border: const Border.symmetric(
+                          horizontal: BorderSide.none,
+                        ),
+                        borderRadius: BorderRadius.circular(8.0),
+                      ),
+                      onSubmitted: (value) {
+                        ref
+                            .read(appSettingsProvider.notifier)
+                            .setPlayerQuality(value);
+                      },
+                      suffix: IconButton(
+                        icon: const Icon(FluentIcons.save),
+                        style: const ButtonStyle(),
+                        onPressed: () {
+                          ref
+                              .read(appSettingsProvider.notifier)
+                              .setPlayerQuality(qualityController.text);
+
+                          qualityFocusNode.unfocus();
                         },
                       ),
                     ),

@@ -1,18 +1,14 @@
 import 'dart:io';
 
-import 'package:app_links/app_links.dart';
 import 'package:fluent_ui/fluent_ui.dart';
-import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:launch_at_startup/launch_at_startup.dart';
 import 'package:package_info_plus/package_info_plus.dart';
 import 'package:tray_manager/tray_manager.dart';
-import 'package:twitch_api/twitch_api.dart';
 import 'package:window_manager/window_manager.dart';
 import 'package:windows_taskbar/windows_taskbar.dart';
 import 'package:zyron/providers/app_settings_provider.dart';
 import 'package:zyron/src/rust/frb_generated.dart';
-import 'package:zyron/src/utils.dart';
 import 'package:zyron/src/variables.dart';
 
 Future<void> main() async {
@@ -21,26 +17,26 @@ Future<void> main() async {
   await RustLib.init();
 
   // ! Load environment variables
-  await dotenv.load();
-  twitchClientId = dotenv.env['TWITCH_CLIENT_ID']!;
-  twitchClient = TwitchClient(
-    clientId: twitchClientId,
-    redirectUri: redirectUri,
-  );
+  // await dotenv.load();
+  // twitchClientId = dotenv.env['TWITCH_CLIENT_ID']!;
+  // twitchClient = TwitchClient(
+  //   clientId: twitchClientId,
+  //   redirectUri: redirectUri,
+  // );
 
   // ! Register app links
-  await register('zyron');
-  final appLinks = AppLinks();
-  appLinks.allUriLinkStream.listen((Uri uri) {
-    debugPrint('Received uri: $uri');
-    try {
-      twitchClient.initializeToken(
-        TwitchToken.fromUrl(uri.toString()),
-      );
-    } catch (e) {
-      debugPrint('Register app links Error: $e');
-    }
-  });
+  // await register('zyron');
+  // final appLinks = AppLinks();
+  // appLinks.allUriLinkStream.listen((Uri uri) {
+  //   debugPrint('Received uri: $uri');
+  //   try {
+  //     twitchClient.initializeToken(
+  //       TwitchToken.fromUrl(uri.toString()),
+  //     );
+  //   } catch (e) {
+  //     debugPrint('Register app links Error: $e');
+  //   }
+  // });
 
   // ! Setup launch at startup
   PackageInfo packageInfo = await PackageInfo.fromPlatform();

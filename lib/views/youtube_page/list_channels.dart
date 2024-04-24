@@ -33,96 +33,111 @@ class ListChannels extends HookConsumerWidget {
               scrollbars: false,
               physics: const BouncingScrollPhysics(),
             ),
-            child: ListView.builder(
-              shrinkWrap: false,
-              itemCount: ytList.length + 1,
-              scrollDirection: Axis.vertical,
-              itemBuilder: (context, index) {
-                if (index == 0) {
-                  return SizedBox(
-                    height: 50.0,
-                    child: Center(
-                      child: Button(
-                        style: ButtonStyle(
-                          backgroundColor: ButtonState.all(
-                            selectedIndex.value == -1
-                                ? Colors.amber.withOpacity(0.2)
-                                : Colors.transparent,
+            child: ytList.isEmpty
+                ? const Center(
+                    child: Text(
+                      'No channels',
+                      style: TextStyle(
+                        fontWeight: FontWeight.normal,
+                        fontSize: 14.0,
+                      ),
+                    ),
+                  )
+                : ListView.builder(
+                    shrinkWrap: false,
+                    itemCount: ytList.length + 1,
+                    scrollDirection: Axis.vertical,
+                    itemBuilder: (context, index) {
+                      if (index == 0) {
+                        return SizedBox(
+                          height: 50.0,
+                          child: Center(
+                            child: Button(
+                              style: ButtonStyle(
+                                backgroundColor: ButtonState.all(
+                                  selectedIndex.value == -1
+                                      ? Colors.amber.withOpacity(0.2)
+                                      : Colors.transparent,
+                                ),
+                                elevation: ButtonState.all(2.0),
+                              ),
+                              onPressed: () async {
+                                selectedVideo.value = null;
+                                selectedIndex.value = -1;
+                                await ref
+                                    .read(videosListProvider.notifier)
+                                    .fetchVideosFromChannels(
+                                      channelIds:
+                                          ytList.map((e) => e.id).toList(),
+                                      maxVideos: 3,
+                                    );
+                              },
+                              child: const Text(
+                                'Fetch All Videos',
+                              ),
+                            ),
                           ),
-                          elevation: ButtonState.all(2.0),
+                        );
+                      }
+                      return MouseRegion(
+                        cursor: SystemMouseCursors.basic,
+                        child: Card(
+                          elevation: 2.0,
+                          shape: const RoundedRectangleBorder(
+                            borderRadius:
+                                BorderRadius.all(Radius.circular(8.0)),
+                          ),
+                          color: selectedIndex.value == index - 1
+                              ? Colors.amber.withOpacity(0.2)
+                              : Colors.transparent,
+                          child: ListTile(
+                            visualDensity: VisualDensity.compact,
+                            splashColor: Colors.transparent,
+                            focusColor: Colors.transparent,
+                            hoverColor: Colors.transparent,
+                            selected: selectedIndex.value == index - 1,
+                            contentPadding:
+                                const EdgeInsets.symmetric(horizontal: 8.0),
+                            title: Text(
+                              ytList[index - 1].name,
+                              style: const TextStyle(
+                                fontWeight: FontWeight.bold,
+                                fontSize: 14.0,
+                              ),
+                              overflow: TextOverflow.ellipsis,
+                              maxLines: 1,
+                            ),
+                            subtitle: Text(
+                              formatSubscribers(ytList[index - 1].subscribers),
+                              style: const TextStyle(
+                                fontSize: 12.0,
+                              ),
+                            ),
+                            leading: CircleAvatar(
+                              backgroundImage: NetworkImage(
+                                ytList[index - 1].logo,
+                              ),
+                            ),
+                            onTap: () async {
+                              selectedVideo.value = null;
+                              selectedIndex.value = index - 1;
+                              await ref
+                                  .read(videosListProvider.notifier)
+                                  .fetchVideos(
+                                      channelId:
+                                          ytList[selectedIndex.value!].id);
+                            },
+                          ),
                         ),
-                        onPressed: () async {
-                          selectedVideo.value = null;
-                          selectedIndex.value = -1;
-                          await ref
-                              .read(videosListProvider.notifier)
-                              .fetchVideosFromChannels(
-                                channelIds: ytList.map((e) => e.id).toList(),
-                                maxVideos: 3,
-                              );
-                        },
-                        child: const Text(
-                          'Fetch All Videos',
-                        ),
-                      ),
-                    ),
-                  );
-                }
-                return MouseRegion(
-                  cursor: SystemMouseCursors.basic,
-                  child: Card(
-                    elevation: 2.0,
-                    shape: const RoundedRectangleBorder(
-                      borderRadius: BorderRadius.all(Radius.circular(8.0)),
-                    ),
-                    color: selectedIndex.value == index - 1
-                        ? Colors.amber.withOpacity(0.2)
-                        : Colors.transparent,
-                    child: ListTile(
-                      visualDensity: VisualDensity.compact,
-                      splashColor: Colors.transparent,
-                      focusColor: Colors.transparent,
-                      hoverColor: Colors.transparent,
-                      selected: selectedIndex.value == index - 1,
-                      contentPadding:
-                          const EdgeInsets.symmetric(horizontal: 8.0),
-                      title: Text(
-                        ytList[index - 1].name,
-                        style: const TextStyle(
-                          fontWeight: FontWeight.bold,
-                          fontSize: 14.0,
-                        ),
-                        overflow: TextOverflow.ellipsis,
-                        maxLines: 1,
-                      ),
-                      subtitle: Text(
-                        formatSubscribers(ytList[index - 1].subscribers),
-                        style: const TextStyle(
-                          fontSize: 12.0,
-                        ),
-                      ),
-                      leading: CircleAvatar(
-                        backgroundImage: NetworkImage(
-                          ytList[index - 1].logo,
-                        ),
-                      ),
-                      onTap: () async {
-                        selectedVideo.value = null;
-                        selectedIndex.value = index - 1;
-                        await ref.read(videosListProvider.notifier).fetchVideos(
-                            channelId: ytList[selectedIndex.value!].id);
-                      },
-                    ),
+                      );
+                    },
+                    // onReorder: (int oldIndex, int newIndex) async {
+                    //   await ref.read(youTubeListProvider.notifier).reorderChannel(
+                    //         oldIndex: oldIndex,
+                    //         newIndex: newIndex,
+                    //       );
+                    // },
                   ),
-                );
-              },
-              // onReorder: (int oldIndex, int newIndex) async {
-              //   await ref.read(youTubeListProvider.notifier).reorderChannel(
-              //         oldIndex: oldIndex,
-              //         newIndex: newIndex,
-              //       );
-              // },
-            ),
           ),
         ),
         const Gap(9.0),
@@ -220,46 +235,62 @@ class ListChannels extends HookConsumerWidget {
                   height: 121.0,
                   padding: const EdgeInsets.all(8.0),
                   decoration: boxDecoration,
-                  child: Center(
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                      children: [
-                        Button(
-                          child: const Text(
-                            'Close',
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.start,
+                    children: [
+                      Align(
+                        alignment: Alignment.center,
+                        child: Text(
+                          selectedVideo.value?.title ?? 'Unknown',
+                          style: const TextStyle(
+                            fontWeight: FontWeight.normal,
+                            fontSize: 14.0,
                           ),
-                          onPressed: () {
-                            selectedVideo.value = null;
-                          },
+                          overflow: TextOverflow.ellipsis,
+                          maxLines: 1,
                         ),
-                        Container(
-                          // padding: const EdgeInsets.all(8.0),
-                          decoration: const BoxDecoration(
-                            borderRadius: BorderRadius.only(
-                              topLeft: Radius.circular(12.0),
-                              bottomLeft: Radius.circular(12.0),
+                      ),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                        children: [
+                          Button(
+                            child: const Text(
+                              'Close',
                             ),
+                            onPressed: () {
+                              selectedVideo.value = null;
+                            },
                           ),
-                          child: selectedVideo.value == null
-                              ? const Placeholder()
-                              : Image.network(
-                                  selectedVideo.value!.highResThumbnail,
-                                  fit: BoxFit.fitWidth,
-                                ),
-                        ),
-                        Button(
-                          child: const Text(
-                            'Watch',
+                          Container(
+                            // padding: const EdgeInsets.all(8.0),
+                            height: 100.0,
+                            decoration: const BoxDecoration(
+                              borderRadius: BorderRadius.only(
+                                topLeft: Radius.circular(12.0),
+                                bottomLeft: Radius.circular(12.0),
+                              ),
+                            ),
+                            child: selectedVideo.value == null
+                                ? const Placeholder()
+                                : Image.network(
+                                    selectedVideo.value!.highResThumbnail,
+                                    fit: BoxFit.fitWidth,
+                                  ),
                           ),
-                          onPressed: () async {
-                            await watchVideo(
-                              selectedVideo.value!,
-                              appSettings.playerSettings,
-                            );
-                          },
-                        ),
-                      ],
-                    ),
+                          Button(
+                            child: const Text(
+                              'Watch',
+                            ),
+                            onPressed: () async {
+                              await watchVideo(
+                                selectedVideo.value!,
+                                appSettings.playerSettings,
+                              );
+                            },
+                          ),
+                        ],
+                      ),
+                    ],
                   ),
                 ),
               ),
