@@ -16,6 +16,7 @@ class ManageStreamers extends HookConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final twitchList = ref.watch(twitchListProvider);
+    final input = useTextEditingController();
 
     return Stack(
       children: [
@@ -150,9 +151,8 @@ class ManageStreamers extends HookConsumerWidget {
             onPressed: () async {
               await showDialog(
                 context: context,
+                barrierDismissible: false,
                 builder: (context) {
-                  final input = useTextEditingController();
-
                   return ContentDialog(
                     title: const Text('Add Streamer'),
                     content: SizedBox(
@@ -168,14 +168,43 @@ class ManageStreamers extends HookConsumerWidget {
                         ),
                         onSubmitted: (value) async {
                           final text = input.text;
-                          await _parseFetch(
-                              text: text, context: context, ref: ref);
+                          if (text.isEmpty) return;
+                          final username = text.split('/').last;
+                          final streamer = await ref
+                              .read(twitchListProvider.notifier)
+                              .fetchStreamer(username: username);
+                          if (streamer == null) {
+                            await showDialog(
+                              context: context,
+                              builder: (context) {
+                                return ContentDialog(
+                                  title: const Text('Error'),
+                                  content: const Text('Streamer not found'),
+                                  actions: <Widget>[
+                                    Button(
+                                      onPressed: () {
+                                        context.pop();
+                                      },
+                                      child: const Text('OK'),
+                                    ),
+                                  ],
+                                );
+                              },
+                            );
+                            return;
+                          }
+                          await ref
+                              .read(twitchListProvider.notifier)
+                              .addStreamer(streamer);
+                          input.clear();
+                          context.pop();
                         },
                       ),
                     ),
                     actions: [
                       Button(
                         onPressed: () {
+                          input.clear();
                           context.pop();
                         },
                         child: const Text('Cancel'),
@@ -183,8 +212,36 @@ class ManageStreamers extends HookConsumerWidget {
                       Button(
                         onPressed: () async {
                           final text = input.text;
-                          await _parseFetch(
-                              text: text, context: context, ref: ref);
+                          if (text.isEmpty) return;
+                          final username = text.split('/').last;
+                          final streamer = await ref
+                              .read(twitchListProvider.notifier)
+                              .fetchStreamer(username: username);
+                          if (streamer == null) {
+                            await showDialog(
+                              context: context,
+                              builder: (context) {
+                                return ContentDialog(
+                                  title: const Text('Error'),
+                                  content: const Text('Streamer not found'),
+                                  actions: <Widget>[
+                                    Button(
+                                      onPressed: () {
+                                        context.pop();
+                                      },
+                                      child: const Text('OK'),
+                                    ),
+                                  ],
+                                );
+                              },
+                            );
+                            return;
+                          }
+                          await ref
+                              .read(twitchListProvider.notifier)
+                              .addStreamer(streamer);
+                          input.clear();
+                          context.pop();
                         },
                         child: const Text('Add'),
                       ),
@@ -198,39 +255,5 @@ class ManageStreamers extends HookConsumerWidget {
         ),
       ],
     );
-  }
-
-  Future<void> _parseFetch({
-    required String text,
-    required BuildContext context,
-    required WidgetRef ref,
-  }) async {
-    if (text.isEmpty) return;
-    final username = text.split('/').last;
-    final streamer = await ref
-        .read(twitchListProvider.notifier)
-        .fetchStreamer(username: username);
-    if (streamer == null) {
-      await showDialog(
-        context: context,
-        builder: (context) {
-          return ContentDialog(
-            title: const Text('Error'),
-            content: const Text('Streamer not found'),
-            actions: <Widget>[
-              Button(
-                onPressed: () {
-                  context.pop();
-                },
-                child: const Text('OK'),
-              ),
-            ],
-          );
-        },
-      );
-      return;
-    }
-    await ref.read(twitchListProvider.notifier).addStreamer(streamer);
-    context.pop();
   }
 }

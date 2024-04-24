@@ -6,6 +6,7 @@ import 'package:launch_at_startup/launch_at_startup.dart';
 import 'package:tray_manager/tray_manager.dart';
 import 'package:window_manager/window_manager.dart';
 import 'package:zyron/providers/app_settings_provider.dart';
+import 'package:zyron/providers/twitch_provider.dart';
 import 'package:zyron/providers/youtube_provider.dart';
 import 'package:zyron/views/skeleton.dart';
 
@@ -64,6 +65,10 @@ class AppFrameState extends ConsumerState<AppFrame>
 
       // ! YouTube channels
       await ref.read(youTubeListProvider.notifier).loadChannels();
+
+      // ! Twitch streamers
+      await ref.read(twitchListProvider.notifier).loadStreamers();
+      await ref.read(twitchListProvider.notifier).refreshStreamers();
 
       return true;
     } catch (e) {

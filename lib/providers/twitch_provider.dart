@@ -26,16 +26,30 @@ class TwitchList extends _$TwitchList {
     }
     final body = response.body;
     final isLive = body.contains('isLiveBroadcast');
-    final profileImageUrl =
-        body.split('profile-image')[1].split('src="')[1].split('"')[0];
-    final displayName =
-        body.split('channel-header__user')[1].split('title="')[1].split('"')[0];
+    // final profileImageUrl =
+    //     body.split('profile-image')[1].split('src="')[1].split('"')[0];
+    const profileImageUrl = '';
+    // final displayName =
+    //     body.split('channel-header__user')[1].split('title="')[1].split('"')[0];
+    final displayName = username;
     return TwitchStreamerModel(
       username: username,
       displayName: displayName,
       profileImageUrl: profileImageUrl,
       isLive: isLive,
     );
+  }
+
+  Future<void> refreshStreamers() async {
+    final List<TwitchStreamerModel> streamers = state;
+    final List<Future<TwitchStreamerModel?>> futures = streamers
+        .map((streamer) => fetchStreamer(username: streamer.username))
+        .toList();
+    final List<TwitchStreamerModel?> updatedStreamers =
+        await Future.wait(futures);
+    state = updatedStreamers.whereType<TwitchStreamerModel>().toList();
+    debugPrint('Streamers refreshed');
+    await saveStreamers();
   }
 
   Future<void> addStreamer(TwitchStreamerModel streamer) async {

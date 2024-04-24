@@ -64,7 +64,7 @@ class ListStreamers extends HookConsumerWidget {
                             contentPadding:
                                 const EdgeInsets.symmetric(horizontal: 8.0),
                             title: Text(
-                              twitchList[index].displayName,
+                              liveStreamers[index].displayName,
                               style: const TextStyle(
                                 fontWeight: FontWeight.bold,
                                 fontSize: 14.0,
@@ -73,14 +73,14 @@ class ListStreamers extends HookConsumerWidget {
                               maxLines: 1,
                             ),
                             subtitle: Text(
-                              twitchList[index].username,
+                              liveStreamers[index].username,
                               style: const TextStyle(
                                 fontSize: 12.0,
                               ),
                             ),
                             leading: CircleAvatar(
                               backgroundImage: NetworkImage(
-                                twitchList[index].profileImageUrl,
+                                liveStreamers[index].profileImageUrl,
                               ),
                             ),
                             onTap: () async {

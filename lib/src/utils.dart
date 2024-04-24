@@ -16,7 +16,7 @@ Future<void> watchStream(
         ? '--ytdl-format=${player.quality}'
         : '--ytdl-format=bestvideo[height<=?1080]+bestaudio/best',
     '--volume=${player.volume}',
-    '--title=${streamer.displayName}',
+    '--title=Ryzon: ${streamer.displayName}',
     '--autofit=50%:50%',
     '--geometry=50%:50%',
     // '--force-window',
@@ -40,7 +40,7 @@ Future<void> watchVideo(
         ? '--ytdl-format=${player.quality}'
         : '--ytdl-format=bestvideo[height<=?1080]+bestaudio/best',
     '--volume=${player.volume}',
-    '--title=${video.title}',
+    '--title=Ryzon: ${video.title}',
     '--autofit=50%:50%',
     '--geometry=50%:50%',
     // '--force-window',
