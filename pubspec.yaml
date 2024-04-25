@@ -39,6 +39,7 @@ dependencies:
   desktop_context_menu: ^0.1.1
   reorderable_grid_view: ^2.2.8
   http: ^1.2.1
+  html: ^0.15.4
 
 dev_dependencies:
   flutter_test:

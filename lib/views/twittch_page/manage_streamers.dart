@@ -62,6 +62,10 @@ class ManageStreamers extends HookConsumerWidget {
                                   title: 'Refresh',
                                   onTap: () async {},
                                 ),
+                                ContextMenuItem(
+                                  title: 'Refresh All',
+                                  onTap: () async {},
+                                ),
                               ],
                             );
                             if (item == null) return;
@@ -104,6 +108,11 @@ class ManageStreamers extends HookConsumerWidget {
                               await ref
                                   .read(twitchListProvider.notifier)
                                   .refreshStreamer(twitchList[index]);
+                            }
+                            if (item.title == 'Refresh All') {
+                              await ref
+                                  .read(twitchListProvider.notifier)
+                                  .refreshStreamers();
                             }
                           },
                           child: Card(

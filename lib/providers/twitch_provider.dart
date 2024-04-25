@@ -3,6 +3,7 @@ import 'dart:io';
 
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart' show debugPrint;
+import 'package:html/dom.dart';
 import 'package:http/http.dart' as http;
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -25,13 +26,22 @@ class TwitchList extends _$TwitchList {
       return null;
     }
     final body = response.body;
-    final isLive = body.contains('isLiveBroadcast');
-    // final profileImageUrl =
-    //     body.split('profile-image')[1].split('src="')[1].split('"')[0];
-    const profileImageUrl = '';
-    // final displayName =
-    //     body.split('channel-header__user')[1].split('title="')[1].split('"')[0];
-    final displayName = username;
+    final document = Document.html(body);
+    final scriptTag =
+        document.querySelectorAll('script[type="application/ld+json"]');
+    if (scriptTag.isEmpty) {
+      return null;
+    }
+    final script = scriptTag.first.text;
+    final List<dynamic> json = jsonDecode(script);
+    if (json.isEmpty) {
+      return null;
+    }
+    final dict = json.first;
+    print(dict);
+    final isLive = dict['publication']['isLiveBroadcast'] ?? false;
+    final profileImageUrl = dict['thumbnailUrl'].last ?? '';
+    final displayName = dict['name'].split(' ').first ?? username;
     return TwitchStreamerModel(
       username: username,
       displayName: displayName,
