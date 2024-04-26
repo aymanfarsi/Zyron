@@ -29,19 +29,22 @@ class TwitchList extends _$TwitchList {
     final document = Document.html(body);
     final scriptTag =
         document.querySelectorAll('script[type="application/ld+json"]');
-    if (scriptTag.isEmpty) {
-      return null;
+    bool isLive;
+    String profileImageUrl;
+    String displayName;
+    try {
+      final script = scriptTag.first.text;
+      final List<dynamic> json = jsonDecode(script);
+
+      final dict = json.first;
+      isLive = dict['publication']['isLiveBroadcast'] ?? false;
+      profileImageUrl = dict['thumbnailUrl'].last ?? '';
+      displayName = dict['name'].split(' ').first ?? username;
+    } catch (e) {
+      isLive = false;
+      profileImageUrl = '';
+      displayName = username;
     }
-    final script = scriptTag.first.text;
-    final List<dynamic> json = jsonDecode(script);
-    if (json.isEmpty) {
-      return null;
-    }
-    final dict = json.first;
-    print(dict);
-    final isLive = dict['publication']['isLiveBroadcast'] ?? false;
-    final profileImageUrl = dict['thumbnailUrl'].last ?? '';
-    final displayName = dict['name'].split(' ').first ?? username;
     return TwitchStreamerModel(
       username: username,
       displayName: displayName,

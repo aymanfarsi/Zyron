@@ -113,6 +113,22 @@ class ListStreamers extends HookConsumerWidget {
               ),
               const Gap(9.0),
               if (selectedIndex.value != null)
+                Container(
+                  height: 200.0,
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(12.0),
+                    border: Border.all(
+                      color: Colors.grey.withOpacity(0.5),
+                      width: 1.0,
+                    ),
+                  ),
+                  child: Image.network(
+                    liveStreamers[selectedIndex.value!].profileImageUrl,
+                    fit: BoxFit.cover,
+                  ),
+                ),
+              const Gap(9.0),
+              if (selectedIndex.value != null)
                 Button(
                   onPressed: () async {
                     await watchStream(

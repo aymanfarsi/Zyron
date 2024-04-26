@@ -16,7 +16,7 @@ Future<void> watchStream(
         ? '--ytdl-format=${player.quality}'
         : '--ytdl-format=bestvideo[height<=?1080]+bestaudio/best',
     '--volume=${player.volume}',
-    '--title=Ryzon: ${streamer.displayName}',
+    '--title=Zyron: ${streamer.displayName}',
     '--autofit=50%:50%',
     '--geometry=50%:50%',
     // '--force-window',
@@ -28,10 +28,11 @@ Future<void> watchStream(
   ]);
 }
 
-Future<void> watchVideo(
-  YouTubeVideoModel video,
-  PlayerSettingsModel player,
-) async {
+Future<void> watchVideo({
+  required String channelName,
+  required YouTubeVideoModel video,
+  required PlayerSettingsModel player,
+}) async {
   await Process.run(player.mpvExe, [
     '--no-terminal',
     '--pause=${player.isAutoPlay ? 'no' : 'yes'}',
@@ -40,7 +41,7 @@ Future<void> watchVideo(
         ? '--ytdl-format=${player.quality}'
         : '--ytdl-format=bestvideo[height<=?1080]+bestaudio/best',
     '--volume=${player.volume}',
-    '--title=Ryzon: ${video.title}',
+    '--title=Zyro: $channelName | ${video.title}',
     '--autofit=50%:50%',
     '--geometry=50%:50%',
     // '--force-window',
