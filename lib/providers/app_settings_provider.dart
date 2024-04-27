@@ -33,6 +33,10 @@ class AppSettings extends _$AppSettings {
     state = state.copyWith(isAutoStart: isAutoStart);
   }
 
+  void setMaximizedOnStart(bool isMaximizedOnStart) {
+    state = state.copyWith(isMaximizedOnStart: isMaximizedOnStart);
+  }
+
   void setStartingPage(int startingPage) {
     state = state.copyWith(startingPage: startingPage);
   }
@@ -107,6 +111,7 @@ class AppSettings extends _$AppSettings {
       isAlwaysOnTop: true,
       isPreventClose: true,
       isAutoStart: false,
+      isMaximizedOnStart: false,
       startingPage: 0,
       playerSettings: PlayerSettingsModel(
         quality: 'best',

@@ -52,11 +52,13 @@ class AppFrameState extends ConsumerState<AppFrame>
   Future<bool> _initAppSettings() async {
     try {
       // ! App settings
-
       final settings =
           await ref.read(appSettingsProvider.notifier).loadSettings();
       await windowManager.setAlwaysOnTop(settings.isAlwaysOnTop);
       await windowManager.setPreventClose(settings.isPreventClose);
+      if (settings.isMaximizedOnStart) {
+        await windowManager.maximize();
+      }
       if (settings.isAutoStart) {
         await launchAtStartup.enable();
       } else {

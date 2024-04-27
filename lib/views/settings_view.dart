@@ -126,6 +126,21 @@ class SettingsView extends HookConsumerWidget {
                     ),
                   ),
                   _SettingItem(
+                    title: 'Maximized on start',
+                    subtitle: 'Start app maximized',
+                    child: ToggleSwitch(
+                      checked: appSettings.isMaximizedOnStart,
+                      onChanged: (value) {
+                        ref
+                            .read(appSettingsProvider.notifier)
+                            .setMaximizedOnStart(value);
+                      },
+                      content: Text(
+                        appSettings.isMaximizedOnStart ? 'On' : 'Off',
+                      ),
+                    ),
+                  ),
+                  _SettingItem(
                     title: 'Starting page',
                     subtitle: 'Select starting page',
                     child: ComboBox<String>(

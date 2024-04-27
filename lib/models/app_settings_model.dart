@@ -11,6 +11,7 @@ class AppSettingsModel with _$AppSettingsModel {
     required bool isAlwaysOnTop,
     required bool isPreventClose,
     required bool isAutoStart,
+    required bool isMaximizedOnStart,
     required int startingPage,
     required PlayerSettingsModel playerSettings,
   }) = _AppSettingsModel;
