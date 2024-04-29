@@ -11,6 +11,15 @@ class VideosList extends _$VideosList {
     return [];
   }
 
+  // Future<void> fetchLiveStreamsFromChannels({
+  //   required List<String> channelIds,
+  // }) async {
+  //   state = const AsyncValue.loading();
+  //   state = await AsyncValue.guard(() async {
+
+  //   });
+  // }
+
   Future<void> fetchVideosFromChannels({
     required List<String> channelIds,
     required int maxVideos,

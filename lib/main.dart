@@ -123,7 +123,6 @@ Future<void> main() async {
   windowManager.waitUntilReadyToShow(windowOptions, () async {
     await windowManager.show();
     await windowManager.focus();
-    await windowManager.maximize();
 
     // ! Initialize the Windows Taskbar
     try {
@@ -170,6 +169,8 @@ class ZyronApp extends ConsumerWidget {
       darkTheme: FluentThemeData.dark().copyWith(
         animationCurve: Curves.easeInOutCirc,
       ),
+      // theme: catppuccinTheme(catppuccin.latte),
+      // darkTheme: catppuccinTheme(catppuccin.macchiato),
       themeMode: appSettings.isDarkMode ? ThemeMode.dark : ThemeMode.light,
       routerConfig: router,
       localizationsDelegates: const [

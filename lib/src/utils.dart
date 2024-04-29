@@ -1,5 +1,15 @@
 import 'dart:io';
 
+import 'package:catppuccin_flutter/catppuccin_flutter.dart';
+import 'package:fluent_ui/fluent_ui.dart';
+import 'package:flutter/material.dart'
+    show
+        ThemeData,
+        AppBarTheme,
+        TextTheme,
+        ColorScheme,
+        FloatingActionButtonThemeData
+    hide ScrollbarThemeData;
 import 'package:win32_registry/win32_registry.dart';
 import 'package:zyron/models/player_settings_model.dart';
 import 'package:zyron/models/twitch_streamer_model.dart';
@@ -98,6 +108,84 @@ String formatSubscribers(int subscribers) {
   } else {
     return '${(subscribers / 1000000000).toStringAsFixed(1)}B';
   }
+}
+
+// FluentThemeData materialToFluentThemeData(ThemeData theme) {
+//   return FluentThemeData.raw(
+//     typography: theme.typography,
+//     extensions: theme.extensions,
+//     accentColor: theme.accentColor,
+//     activeColor: theme.activeColor,
+//     inactiveColor: theme.inactiveColor,
+//     inactiveBackgroundColor: theme.inactiveBackgroundColor,
+//     shadowColor: theme.shadowColor,
+//     fasterAnimationDuration: theme.fasterAnimationDuration,
+//     fastAnimationDuration: theme.fastAnimationDuration,
+//     mediumAnimationDuration: theme.mediumAnimationDuration,
+//     slowAnimationDuration: theme.slowAnimationDuration,
+//     animationCurve: theme.animationCurve,
+//     brightness: theme.brightness,
+//     visualDensity: theme.visualDensity,
+//     scaffoldBackgroundColor: theme.scaffoldBackgroundColor,
+//     acrylicBackgroundColor: theme.acrylicBackgroundColor,
+//     micaBackgroundColor: theme.micaBackgroundColor,
+//     buttonTheme: theme.buttonTheme,
+//     checkboxTheme: theme.checkboxTheme,
+//     toggleSwitchTheme: theme.toggleSwitchTheme,
+//     bottomNavigationTheme: theme.bottomNavigationTheme,
+//     iconTheme: theme.iconTheme,
+//     dialogTheme: theme.dialogTheme,
+//     tooltipTheme: theme.tooltipTheme,
+//     dividerTheme: theme.dividerTheme,
+//     navigationPaneTheme: theme.navigationPaneTheme,
+//     radioButtonTheme: theme.radioButtonTheme,
+//     toggleButtonTheme: theme.toggleButtonTheme,
+//     sliderTheme: theme.sliderTheme,
+//     infoBarTheme: theme.infoBarTheme,
+//     focusTheme: theme.focusTheme,
+//     scrollbarTheme: theme.scrollbarTheme,
+//     cardColor: theme.cardColor,
+//     selectionColor:
+//         theme.textSelectionTheme.selectionColor ?? theme.primaryColor,
+//   );
+// }
+
+ThemeData catppuccinTheme(Flavor flavor) {
+  Color primaryColor = flavor.mauve;
+  Color secondaryColor = flavor.pink;
+  return ThemeData(
+    useMaterial3: true,
+    appBarTheme: AppBarTheme(
+      elevation: 0,
+      titleTextStyle: TextStyle(
+        color: flavor.text,
+        fontSize: 20,
+        fontWeight: FontWeight.bold,
+      ),
+      backgroundColor: flavor.crust,
+      foregroundColor: flavor.mantle,
+    ),
+    colorScheme: ColorScheme(
+      background: flavor.base,
+      brightness: Brightness.light,
+      error: flavor.surface2,
+      onBackground: flavor.text,
+      onError: flavor.red,
+      onPrimary: primaryColor,
+      onSecondary: secondaryColor,
+      onSurface: flavor.text,
+      primary: flavor.crust,
+      secondary: flavor.mantle,
+      surface: flavor.surface0,
+    ),
+    textTheme: const TextTheme().apply(
+      bodyColor: flavor.text,
+      displayColor: primaryColor,
+    ),
+    floatingActionButtonTheme: const FloatingActionButtonThemeData(
+      elevation: 0,
+    ),
+  );
 }
 
 Future<void> register(String scheme) async {

@@ -40,6 +40,7 @@ dependencies:
   reorderable_grid_view: ^2.2.8
   http: ^1.2.1
   html: ^0.15.4
+  catppuccin_flutter: ^1.0.0
 
 dev_dependencies:
   flutter_test:
