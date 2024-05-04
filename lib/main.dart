@@ -47,8 +47,7 @@ Future<void> main() async {
 
   // ! Initialize the system tray
   await trayManager.setIcon(
-    // Platform.isWindows ? 'assets/zyron_icon.ico' : 'assets/zyron_icon.png',
-    'assets/zyron_icon.ico',
+    Platform.isWindows ? 'assets/zyron_icon.ico' : 'assets/zyron_icon.png',
     iconPosition: TrayIconPositon.left,
   );
   await trayManager.setToolTip('Zyron System Tray');
