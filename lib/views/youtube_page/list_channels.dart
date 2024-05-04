@@ -283,7 +283,9 @@ class ListChannels extends HookConsumerWidget {
                             ),
                             onPressed: () async {
                               await watchVideo(
-                                channelName: ytList[selectedIndex.value!].name,
+                                channelName: selectedIndex.value == -1
+                                    ? 'All Channels'
+                                    : ytList[selectedIndex.value!].name,
                                 video: selectedVideo.value!,
                                 player: appSettings.playerSettings,
                               );

@@ -44,7 +44,7 @@ Future<void> watchVideo({
   required PlayerSettingsModel player,
 }) async {
   await Process.run(player.mpvExe, [
-    '--no-terminal',
+    // '--no-terminal',
     '--pause=${player.isAutoPlay ? 'no' : 'yes'}',
     if (player.exitOnDone) '--keep-open=yes',
     player.quality.isNotEmpty
