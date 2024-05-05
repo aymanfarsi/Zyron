@@ -1,6 +1,7 @@
 import 'package:fluent_ui/fluent_ui.dart';
 import 'package:flutter/material.dart' show Icons;
 import 'package:flutter_hooks/flutter_hooks.dart';
+import 'package:gap/gap.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:zyron/providers/twitch_provider.dart';
 import 'package:zyron/views/twittch_page/list_streamers.dart';
@@ -26,10 +27,25 @@ class TwitchView extends HookConsumerWidget {
       shortcutsEnabled: false,
       footer: Padding(
         padding: const EdgeInsets.only(right: 3.0),
-        child: Center(
-          child: Text(
-            '${twitchList.where((t) => t.isLive).length} Live Channels',
-          ),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.end,
+          children: [
+            Text(
+              '${twitchList.where((t) => t.isLive).length} Live Channels',
+            ),
+            const Gap(9),
+            Button(
+              style: ButtonStyle(
+                elevation: ButtonState.all(2.0),
+              ),
+              onPressed: () async {
+                await ref.read(twitchListProvider.notifier).refreshStreamers();
+              },
+              child: const Text(
+                'Refresh ',
+              ),
+            ),
+          ],
         ),
       ),
       tabs: [

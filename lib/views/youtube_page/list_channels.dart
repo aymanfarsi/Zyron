@@ -10,6 +10,9 @@ import 'package:zyron/providers/youtube_provider.dart';
 import 'package:zyron/src/utils.dart';
 import 'package:zyron/views/components.dart';
 
+// ignore: constant_identifier_names
+const int FETCH_ALL_VIDEOS_LIMIT = 3;
+
 class ListChannels extends HookConsumerWidget {
   const ListChannels({super.key});
 
@@ -69,7 +72,7 @@ class ListChannels extends HookConsumerWidget {
                                     .fetchVideosFromChannels(
                                       channelIds:
                                           ytList.map((e) => e.id).toList(),
-                                      maxVideos: 3,
+                                      maxVideos: FETCH_ALL_VIDEOS_LIMIT,
                                     );
                               },
                               child: const Text(
@@ -154,11 +157,43 @@ class ListChannels extends HookConsumerWidget {
                 decoration: boxDecoration,
                 child: videoList.when(
                   data: (videos) {
-                    return ListView.builder(
-                      shrinkWrap: false,
-                      itemCount: videos.length,
-                      itemBuilder: (context, index) {
-                        return Card(
+                    List<Widget> videoWidgets = [];
+                    for (int index = 0; index < videos.length; index++) {
+                      if (index % FETCH_ALL_VIDEOS_LIMIT == 0) {
+                        videoWidgets.add(
+                          Container(
+                            padding: const EdgeInsets.all(8.0),
+                            height: 50.0,
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.start,
+                              children: [
+                                const Expanded(
+                                  child: Divider(),
+                                ),
+                                CircleAvatar(
+                                  backgroundImage: NetworkImage(
+                                    ytList[index ~/ FETCH_ALL_VIDEOS_LIMIT]
+                                        .logo,
+                                  ),
+                                ),
+                                const Gap(9.0),
+                                Text(
+                                  ytList[index ~/ FETCH_ALL_VIDEOS_LIMIT].name,
+                                  style: const TextStyle(
+                                    fontWeight: FontWeight.bold,
+                                    fontSize: 14.0,
+                                  ),
+                                ),
+                                const Expanded(
+                                  child: Divider(),
+                                ),
+                              ],
+                            ),
+                          ),
+                        );
+                      }
+                      videoWidgets.add(
+                        Card(
                           elevation: 2.0,
                           shape: const RoundedRectangleBorder(
                             borderRadius:
@@ -209,8 +244,12 @@ class ListChannels extends HookConsumerWidget {
                               selectedVideo.value = videos[index];
                             },
                           ),
-                        );
-                      },
+                        ),
+                      );
+                    }
+                    return ListView(
+                      shrinkWrap: false,
+                      children: videoWidgets,
                     );
                   },
                   error: (error, stackTrace) {
