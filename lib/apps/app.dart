@@ -100,9 +100,9 @@ class AppFrameState extends ConsumerState<AppFrame>
           );
         }
         if (snapshot.hasData && snapshot.data == false) {
-          return const Scaffold(
+          return  Scaffold(
             body: Center(
-              child: Text('Error initializing app settings'),
+              child: Text('Error initializing app settings: ${snapshot.error}'),
             ),
           );
         }

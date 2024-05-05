@@ -8,6 +8,7 @@ class TwitchStreamerModel with _$TwitchStreamerModel {
   factory TwitchStreamerModel({
     required String username,
     required String displayName,
+    required String description,
     required String profileImageUrl,
     required bool isLive,
   }) = _TwitchStreamerModel;

@@ -105,11 +105,12 @@ class ListStreamers extends HookConsumerWidget {
               Text(
                 selectedIndex.value == null
                     ? 'Select a streamer'
-                    : 'Selected streamer: ${liveStreamers[selectedIndex.value!].displayName}',
+                    : liveStreamers[selectedIndex.value!].description,
                 style: const TextStyle(
                   fontWeight: FontWeight.normal,
                   fontSize: 14.0,
                 ),
+                textAlign: TextAlign.justify,
               ),
               const Gap(9.0),
               if (selectedIndex.value != null)

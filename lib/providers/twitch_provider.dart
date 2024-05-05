@@ -8,6 +8,7 @@ import 'package:http/http.dart' as http;
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:zyron/models/twitch_streamer_model.dart';
+import 'package:zyron/src/rust/api/simple.dart';
 
 part 'twitch_provider.g.dart';
 
@@ -31,6 +32,7 @@ class TwitchList extends _$TwitchList {
         document.querySelectorAll('script[type="application/ld+json"]');
     bool isLive;
     String profileImageUrl;
+    String description;
     String displayName;
     try {
       final script = scriptTag.first.text;
@@ -39,15 +41,18 @@ class TwitchList extends _$TwitchList {
       final dict = json.first;
       isLive = dict['publication']['isLiveBroadcast'] ?? false;
       profileImageUrl = dict['thumbnailUrl'].last ?? '';
+      description = dict['description'] ?? '';
       displayName = dict['name'].split(' ').first ?? username;
     } catch (e) {
       isLive = false;
       profileImageUrl = '';
+      description = '';
       displayName = username;
     }
     return TwitchStreamerModel(
       username: username,
       displayName: displayName,
+      description: description,
       profileImageUrl: profileImageUrl,
       isLive: isLive,
     );
@@ -61,26 +66,31 @@ class TwitchList extends _$TwitchList {
     final List<TwitchStreamerModel?> updatedStreamers =
         await Future.wait(futures);
     state = updatedStreamers.whereType<TwitchStreamerModel>().toList();
+    showToast(message: 'Streamers refreshed');
     debugPrint('Streamers refreshed');
     await saveStreamers();
   }
 
   Future<void> addStreamer(TwitchStreamerModel streamer) async {
     if (state.any((s) => s.username == streamer.username)) {
+      showToast(message: 'Streamer already exists');
       debugPrint('Streamer already exists');
       return;
     }
     state = [...state, streamer];
+    showToast(message: 'Streamer added');
     debugPrint('Streamer added');
     await saveStreamers();
   }
 
   Future<void> removeStreamer(TwitchStreamerModel streamer) async {
     if (!state.any((s) => s.username == streamer.username)) {
+      showToast(message: 'Streamer does not exist');
       debugPrint('Streamer does not exist');
       return;
     }
     state = state.where((s) => s.username != streamer.username).toList();
+    showToast(message: 'Streamer removed');
     debugPrint('Streamer removed');
     await saveStreamers();
   }
@@ -90,6 +100,7 @@ class TwitchList extends _$TwitchList {
     required int newIndex,
   }) async {
     if (oldIndex == newIndex) {
+      showToast(message: 'Same index');
       debugPrint('Same index');
       return;
     }
@@ -97,6 +108,7 @@ class TwitchList extends _$TwitchList {
     final streamer = streamers.removeAt(oldIndex);
     streamers.insert(newIndex, streamer);
     state = streamers;
+    // showToast(message: 'Streamer reordered');
     debugPrint('Streamer reordered');
     await saveStreamers();
   }
@@ -106,6 +118,7 @@ class TwitchList extends _$TwitchList {
     final updatedStreamer = c ?? streamer;
     final index = state.indexWhere((s) => s.username == streamer.username);
     state[index] = updatedStreamer;
+    showToast(message: 'Streamer refreshed');
     debugPrint('Streamer refreshed');
     await saveStreamers();
   }
@@ -117,12 +130,14 @@ class TwitchList extends _$TwitchList {
   void decodeStreamers(String json) {
     final List<dynamic> decodedJson = jsonDecode(json);
     state = decodedJson.map((c) => TwitchStreamerModel.fromJson(c)).toList();
+    // showToast(message: 'Streamers loaded');
     debugPrint('${state.length} Streamer(s) loaded');
   }
 
   Future<void> saveStreamers() async {
     final SharedPreferences prefs = await SharedPreferences.getInstance();
     await prefs.setString('zyron_streamers', encodeStreamers());
+    showToast(message: 'Streamers saved');
     debugPrint('${state.length} Streamer(s) saved');
   }
 
@@ -148,9 +163,11 @@ class TwitchList extends _$TwitchList {
       File file = File('$selectedDirectory/zyron_streamers.json');
       String encodedJson = encodeStreamers();
       await file.writeAsString(encodedJson);
+      showToast(message: 'Streamers exported');
       debugPrint('Streamers exported');
       return true;
     } catch (e) {
+      showToast(message: 'Export Streamers Error: $e');
       debugPrint('Save Streamers Error: $e');
       return false;
     }
@@ -175,6 +192,7 @@ class TwitchList extends _$TwitchList {
       decodeStreamers(json);
       return true;
     } catch (e) {
+      showToast(message: 'Restore Streamers Error: $e');
       debugPrint('Load Streamers Error: $e');
       return false;
     }

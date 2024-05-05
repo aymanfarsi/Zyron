@@ -56,7 +56,7 @@ class RustLib extends BaseEntrypoint<RustLibApi, RustLibApiImpl, RustLibWire> {
   String get codegenVersion => '2.0.0-dev.32';
 
   @override
-  int get rustContentHash => -1918914929;
+  int get rustContentHash => -400345543;
 
   static const kDefaultExternalLibraryLoaderConfig =
       ExternalLibraryLoaderConfig(
@@ -70,6 +70,8 @@ abstract class RustLibApi extends BaseApi {
   String greet({required String name, dynamic hint});
 
   Future<void> initApp({dynamic hint});
+
+  void showToast({required String message, dynamic hint});
 }
 
 class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
@@ -100,8 +102,8 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
   }
 
   TaskConstMeta get kGreetConstMeta => const TaskConstMeta(
-        debugName: 'greet',
-        argNames: ['name'],
+        debugName: "greet",
+        argNames: ["name"],
       );
 
   @override
@@ -110,7 +112,7 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
       callFfi: (port_) {
         final serializer = SseSerializer(generalizedFrbRustBinding);
         pdeCallFfi(generalizedFrbRustBinding, serializer,
-            funcId: 2, port: port_);
+            funcId: 3, port: port_);
       },
       codec: SseCodec(
         decodeSuccessData: sse_decode_unit,
@@ -124,8 +126,32 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
   }
 
   TaskConstMeta get kInitAppConstMeta => const TaskConstMeta(
-        debugName: 'init_app',
+        debugName: "init_app",
         argNames: [],
+      );
+
+  @override
+  void showToast({required String message, dynamic hint}) {
+    return handler.executeSync(SyncTask(
+      callFfi: () {
+        final serializer = SseSerializer(generalizedFrbRustBinding);
+        sse_encode_String(message, serializer);
+        return pdeCallFfi(generalizedFrbRustBinding, serializer, funcId: 2)!;
+      },
+      codec: SseCodec(
+        decodeSuccessData: sse_decode_unit,
+        decodeErrorData: null,
+      ),
+      constMeta: kShowToastConstMeta,
+      argValues: [message],
+      apiImpl: this,
+      hint: hint,
+    ));
+  }
+
+  TaskConstMeta get kShowToastConstMeta => const TaskConstMeta(
+        debugName: "show_toast",
+        argNames: ["message"],
       );
 
   @protected

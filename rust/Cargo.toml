@@ -8,3 +8,4 @@ crate-type = ["cdylib", "staticlib"]
 
 [dependencies]
 flutter_rust_bridge = "=2.0.0-dev.32"
+winrt-toast = "0.1.1"
