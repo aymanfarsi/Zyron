@@ -10,10 +10,15 @@ import 'package:flutter/material.dart'
         ColorScheme,
         FloatingActionButtonThemeData
     hide ScrollbarThemeData;
+import 'package:flutter/services.dart';
 import 'package:win32_registry/win32_registry.dart';
 import 'package:zyron/models/player_settings_model.dart';
 import 'package:zyron/models/twitch_streamer_model.dart';
 import 'package:zyron/models/youtube_video_model.dart';
+
+Future<void> copyToClipboard(String text) async {
+  await Clipboard.setData(ClipboardData(text: text));
+}
 
 Future<void> watchStream(
   TwitchStreamerModel streamer,
@@ -52,7 +57,7 @@ Future<void> watchVideo({
         : '--ytdl-format=bestvideo[height<=?1080]+bestaudio/best',
     '--volume=${player.volume}',
     '--title=Zyro: $channelName | ${video.title}',
-    '--autofit=50%:50%',
+    '--autofit=25%:25%',
     '--geometry=50%:50%',
     // '--force-window',
     // '--ontop',

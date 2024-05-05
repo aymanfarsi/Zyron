@@ -65,8 +65,9 @@ flutter:
     - assets/
 
 flutter_launcher_icons:
+  image_path: "assets/zyron_icon.ico"
   windows:
     generate: true
     image_path: "assets/zyron_icon.ico"
     # min:48, max:256, default: 48
-    icon_size: 192
+    icon_size: 48

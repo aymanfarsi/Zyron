@@ -164,6 +164,9 @@ class ListChannels extends HookConsumerWidget {
                             borderRadius:
                                 BorderRadius.all(Radius.circular(8.0)),
                           ),
+                          color: selectedVideo.value == videos[index]
+                              ? Colors.amber.withOpacity(0.2)
+                              : Colors.transparent,
                           child: ListTile(
                             leading: Container(
                               width: 100.0,
@@ -198,7 +201,6 @@ class ListChannels extends HookConsumerWidget {
                             ),
                             trailing: Text(
                               formatPublishedDate(videos[index].publishedDate),
-                              // videos[index].uploadedDate.toString(),
                               style: const TextStyle(
                                 fontSize: 12.0,
                               ),
@@ -261,9 +263,19 @@ class ListChannels extends HookConsumerWidget {
                               selectedVideo.value = null;
                             },
                           ),
+                          Button(
+                            child: const Text(
+                              'Copy Link',
+                            ),
+                            onPressed: () async {
+                              await copyToClipboard(
+                                selectedVideo.value!.url,
+                              );
+                            },
+                          ),
                           Container(
                             // padding: const EdgeInsets.all(8.0),
-                            height: 100.0,
+                            height: 75.0,
                             decoration: const BoxDecoration(
                               borderRadius: BorderRadius.only(
                                 topLeft: Radius.circular(12.0),
