@@ -7,6 +7,7 @@ import 'package:package_info_plus/package_info_plus.dart';
 import 'package:tray_manager/tray_manager.dart';
 import 'package:window_manager/window_manager.dart';
 import 'package:windows_taskbar/windows_taskbar.dart';
+import 'package:zyron/apps/error_app.dart';
 import 'package:zyron/providers/app_settings_provider.dart';
 import 'package:zyron/src/rust/frb_generated.dart';
 import 'package:zyron/src/variables.dart';
@@ -145,11 +146,23 @@ Future<void> main() async {
   });
 
   // ! Run the app
-  runApp(
-    const ProviderScope(
-      child: ZyronApp(),
-    ),
-  );
+  switch (Platform.operatingSystem) {
+    case 'windows':
+      runApp(
+        const ProviderScope(
+          child: ZyronApp(),
+        ),
+      );
+      break;
+    default:
+      runApp(
+        ProviderScope(
+          child: ErrorApp(
+            message: 'Unsupported platform: ${Platform.operatingSystem}',
+          ),
+        ),
+      );
+  }
 }
 
 class ZyronApp extends ConsumerWidget {
