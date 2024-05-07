@@ -159,7 +159,8 @@ class ListChannels extends HookConsumerWidget {
                   data: (videos) {
                     List<Widget> videoWidgets = [];
                     for (int index = 0; index < videos.length; index++) {
-                      if (index % FETCH_ALL_VIDEOS_LIMIT == 0) {
+                      if (index % FETCH_ALL_VIDEOS_LIMIT == 0 &&
+                          selectedIndex.value == -1) {
                         videoWidgets.add(
                           Container(
                             padding: const EdgeInsets.all(8.0),

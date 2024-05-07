@@ -4,8 +4,8 @@ import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:gap/gap.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:zyron/providers/twitch_provider.dart';
-import 'package:zyron/views/twittch_page/list_streamers.dart';
-import 'package:zyron/views/twittch_page/manage_streamers.dart';
+import 'package:zyron/views/twitch_page/list_streamers.dart';
+import 'package:zyron/views/twitch_page/manage_streamers.dart';
 
 class TwitchView extends HookConsumerWidget {
   const TwitchView({super.key});

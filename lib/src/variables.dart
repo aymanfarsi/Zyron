@@ -5,7 +5,7 @@ import 'package:zyron/apps/app.dart';
 import 'package:zyron/views/anime_view.dart';
 import 'package:zyron/views/help_view.dart';
 import 'package:zyron/views/settings_view.dart';
-import 'package:zyron/views/twittch_page/twitch_view.dart';
+import 'package:zyron/views/twitch_page/twitch_view.dart';
 import 'package:zyron/views/youtube_page/youtube_view.dart';
 
 // ! Twitch API
