@@ -44,9 +44,11 @@ class TwitchView extends HookConsumerWidget {
                       elevation: ButtonState.all(2.0),
                     ),
                     onPressed: () async {
+                      isFetching.value = true;
                       await ref
                           .read(twitchListProvider.notifier)
                           .refreshStreamers();
+                      isFetching.value = false;
                     },
                     child: const Text(
                       'Refresh ',
