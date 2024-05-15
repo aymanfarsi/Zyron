@@ -148,6 +148,7 @@ Future<void> main() async {
   // ! Run the app
   switch (Platform.operatingSystem) {
     case 'windows':
+    case 'linux':
       runApp(
         const ProviderScope(
           child: ZyronApp(),
