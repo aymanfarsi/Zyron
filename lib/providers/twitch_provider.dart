@@ -47,7 +47,7 @@ class TwitchList extends _$TwitchList {
       profileImageUrl = '';
       description = '';
       displayName = username;
-      debugPrint('Error: $e');
+      // debugPrint('Error: $e');
     }
     return TwitchStreamerModel(
       username: username,

@@ -27,9 +27,7 @@ Future<void> watchStream(
   await Process.run(player.mpvExe, [
     '--no-terminal',
     if (player.exitOnDone) '--keep-open=yes',
-    player.quality.isNotEmpty
-        ? '--ytdl-format=${player.quality}'
-        : '--ytdl-format=bestvideo[height<=?1080]+bestaudio/best',
+    '--ytdl-format=${player.quality.isNotEmpty ? player.quality : 'bestvideo+bestaudio/best'}',
     '--volume=${player.volume}',
     '--title=Zyron: ${streamer.displayName}',
     '--autofit=50%:50%',
@@ -171,10 +169,8 @@ ThemeData catppuccinTheme(Flavor flavor) {
       foregroundColor: flavor.mantle,
     ),
     colorScheme: ColorScheme(
-      background: flavor.base,
       brightness: Brightness.light,
       error: flavor.surface2,
-      onBackground: flavor.text,
       onError: flavor.red,
       onPrimary: primaryColor,
       onSecondary: secondaryColor,
