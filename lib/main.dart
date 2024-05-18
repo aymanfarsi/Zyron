@@ -141,7 +141,11 @@ Future<void> main() async {
         ],
       );
     } catch (e) {
-      debugPrint('Initialize the Windows Taskbar Error: $e');
+      if (!Platform.isWindows) {
+        debugPrint('Unsupported taskbar for ${Platform.operatingSystem}');
+      } else {
+        debugPrint('Initialize the Windows Taskbar Error: $e');
+      }
     }
   });
 
