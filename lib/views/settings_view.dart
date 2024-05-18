@@ -4,6 +4,8 @@ import 'package:gap/gap.dart';
 import 'package:go_router/go_router.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:zyron/providers/app_settings_provider.dart';
+import 'package:zyron/providers/twitch_provider.dart';
+import 'package:zyron/providers/youtube_provider.dart';
 import 'package:zyron/src/variables.dart';
 import 'package:zyron/views/components.dart';
 
@@ -238,9 +240,9 @@ class SettingsView extends HookConsumerWidget {
               _Section(
                 header: 'Misc',
                 items: [
-                  // ! Export settings
+                  // ! Export app settings
                   _SettingItem(
-                    title: 'Export settings',
+                    title: 'Export app settings',
                     subtitle: 'Export to file',
                     child: Button(
                       onPressed: () async {
@@ -253,9 +255,9 @@ class SettingsView extends HookConsumerWidget {
                       ),
                     ),
                   ),
-                  // ! Restore settings
+                  // ! Restore app settings
                   _SettingItem(
-                    title: 'Restore settings',
+                    title: 'Restore app settings',
                     subtitle: 'Restore all settings',
                     child: Button(
                       onPressed: () async {
@@ -268,6 +270,69 @@ class SettingsView extends HookConsumerWidget {
                       ),
                     ),
                   ),
+                  const Divider(),
+                  // ! Export YouTube channels list
+                  _SettingItem(
+                    title: 'Export YouTube channels',
+                    subtitle: 'Export to file',
+                    child: Button(
+                      onPressed: () async {
+                        await ref
+                            .read(youTubeListProvider.notifier)
+                            .exportChannels();
+                      },
+                      child: const Text(
+                        'Export',
+                      ),
+                    ),
+                  ),
+                  // ! Restore app settings
+                  _SettingItem(
+                    title: 'Restore YouTube channels',
+                    subtitle: 'Restore all channels',
+                    child: Button(
+                      onPressed: () async {
+                        await ref
+                            .read(youTubeListProvider.notifier)
+                            .restoreChannels();
+                      },
+                      child: const Text(
+                        'Restore',
+                      ),
+                    ),
+                  ),
+                  const Divider(),
+                  // ! Export Twitch streamers list
+                  _SettingItem(
+                    title: 'Export Twitch streamers',
+                    subtitle: 'Export to file',
+                    child: Button(
+                      onPressed: () async {
+                        await ref
+                            .read(twitchListProvider.notifier)
+                            .exportStreamers();
+                      },
+                      child: const Text(
+                        'Export',
+                      ),
+                    ),
+                  ),
+                  // ! Restore Twitch streamers list
+                  _SettingItem(
+                    title: 'Restore Twitch streamers',
+                    subtitle: 'Restore all streamers',
+                    child: Button(
+                      onPressed: () async {
+                        await ref
+                            .read(twitchListProvider.notifier)
+                            .restoreStreamers();
+                      },
+                      child: const Text(
+                        'Restore',
+                      ),
+                    ),
+                  ),
+                  const Divider(),
                   // ! Reset settings
                   _SettingItem(
                     title: 'Reset settings',

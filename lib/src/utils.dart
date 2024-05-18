@@ -32,6 +32,8 @@ Future<void> watchStream(
     '--title=Zyron: ${streamer.displayName}',
     '--autofit=50%:50%',
     '--geometry=50%:50%',
+    '--sub-visibility=no',
+    '--mute=no',
     // '--force-window',
     // '--ontop',
     // '--no-border',
@@ -47,7 +49,7 @@ Future<void> watchVideo({
   required PlayerSettingsModel player,
 }) async {
   await Process.run(player.mpvExe, [
-    // '--no-terminal',
+    '--no-terminal',
     '--pause=${player.isAutoPlay ? 'no' : 'yes'}',
     if (player.exitOnDone) '--keep-open=yes',
     player.quality.isNotEmpty
@@ -57,6 +59,7 @@ Future<void> watchVideo({
     '--title=Zyro: $channelName | ${video.title}',
     '--autofit=25%:25%',
     '--geometry=50%:50%',
+    '--mute=no',
     // '--force-window',
     // '--ontop',
     // '--no-border',
