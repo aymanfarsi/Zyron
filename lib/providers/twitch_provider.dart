@@ -36,9 +36,8 @@ class TwitchList extends _$TwitchList {
     String displayName;
     try {
       final script = scriptTag.first.text;
-      final List<dynamic> json = jsonDecode(script);
-
-      final dict = json.first;
+      final json = jsonDecode(script);
+      final dict = json['@graph'].first;
       isLive = dict['publication']['isLiveBroadcast'] ?? false;
       profileImageUrl = dict['thumbnailUrl'].last ?? '';
       description = dict['description'] ?? '';
@@ -48,6 +47,7 @@ class TwitchList extends _$TwitchList {
       profileImageUrl = '';
       description = '';
       displayName = username;
+      // debugPrint('Error: $e');
     }
     return TwitchStreamerModel(
       username: username,

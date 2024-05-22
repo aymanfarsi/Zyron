@@ -35,6 +35,18 @@ class VideosList extends _$VideosList {
     });
   }
 
+  Stream<List<YouTubeVideoModel>> fetchVideosStreams({
+    required List<String> channelIds,
+    required int maxVideos,
+  }) async* {
+    List<YouTubeVideoModel> currentVideos = [];
+    for (final channelId in channelIds) {
+      final videos = await _fetchVideosFromChannel(channelId: channelId);
+      currentVideos.addAll(videos.take(maxVideos));
+      yield currentVideos;
+    }
+  }
+
   Future<void> fetchVideos({required String channelId}) async {
     state = const AsyncValue.loading();
     state = await AsyncValue.guard(() async {

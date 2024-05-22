@@ -27,13 +27,13 @@ Future<void> watchStream(
   await Process.run(player.mpvExe, [
     '--no-terminal',
     if (player.exitOnDone) '--keep-open=yes',
-    player.quality.isNotEmpty
-        ? '--ytdl-format=${player.quality}'
-        : '--ytdl-format=bestvideo[height<=?1080]+bestaudio/best',
+    '--ytdl-format=${player.quality.isNotEmpty ? player.quality : 'bestvideo+bestaudio/best'}',
     '--volume=${player.volume}',
     '--title=Zyron: ${streamer.displayName}',
     '--autofit=50%:50%',
     '--geometry=50%:50%',
+    '--sub-visibility=no',
+    '--mute=no',
     // '--force-window',
     // '--ontop',
     // '--no-border',
@@ -49,7 +49,7 @@ Future<void> watchVideo({
   required PlayerSettingsModel player,
 }) async {
   await Process.run(player.mpvExe, [
-    // '--no-terminal',
+    '--no-terminal',
     '--pause=${player.isAutoPlay ? 'no' : 'yes'}',
     if (player.exitOnDone) '--keep-open=yes',
     player.quality.isNotEmpty
@@ -59,6 +59,7 @@ Future<void> watchVideo({
     '--title=Zyro: $channelName | ${video.title}',
     '--autofit=25%:25%',
     '--geometry=50%:50%',
+    '--mute=no',
     // '--force-window',
     // '--ontop',
     // '--no-border',
@@ -171,10 +172,8 @@ ThemeData catppuccinTheme(Flavor flavor) {
       foregroundColor: flavor.mantle,
     ),
     colorScheme: ColorScheme(
-      background: flavor.base,
       brightness: Brightness.light,
       error: flavor.surface2,
-      onBackground: flavor.text,
       onError: flavor.red,
       onPrimary: primaryColor,
       onSecondary: secondaryColor,

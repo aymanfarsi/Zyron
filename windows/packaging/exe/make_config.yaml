@@ -1,0 +1,7 @@
+app_id: io.github.aymanfarsi.driveaf
+publisher: AymanFarsi
+publisher_url: https://www.github.com/aymanfarsi
+display_name: DriveAF
+create_desktop_icon: true
+locales:
+  - en

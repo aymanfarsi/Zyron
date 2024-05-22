@@ -1,11 +1,11 @@
 import 'package:fluent_ui/fluent_ui.dart';
-import 'package:flutter/material.dart' show Icons;
+import 'package:flutter/material.dart' show CircularProgressIndicator, Icons;
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:gap/gap.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:zyron/providers/twitch_provider.dart';
-import 'package:zyron/views/twittch_page/list_streamers.dart';
-import 'package:zyron/views/twittch_page/manage_streamers.dart';
+import 'package:zyron/views/twitch_page/list_streamers.dart';
+import 'package:zyron/views/twitch_page/manage_streamers.dart';
 
 class TwitchView extends HookConsumerWidget {
   const TwitchView({super.key});
@@ -15,6 +15,7 @@ class TwitchView extends HookConsumerWidget {
     final twitchList = ref.watch(twitchListProvider);
 
     final tabIndex = useState<int>(0);
+    final isFetching = useState<bool>(false);
 
     return TabView(
       currentIndex: tabIndex.value,
@@ -39,7 +40,9 @@ class TwitchView extends HookConsumerWidget {
                 elevation: ButtonState.all(2.0),
               ),
               onPressed: () async {
+                isFetching.value = true;
                 await ref.read(twitchListProvider.notifier).refreshStreamers();
+                isFetching.value = false;
               },
               child: const Text(
                 'Refresh ',
@@ -52,7 +55,11 @@ class TwitchView extends HookConsumerWidget {
         Tab(
           text: const Center(child: Text('Streamers')),
           icon: const Icon(Icons.video_collection_outlined),
-          body: const ListStreamers(),
+          body: isFetching.value
+              ? const Center(
+                  child: CircularProgressIndicator(),
+                )
+              : const ListStreamers(),
         ),
         Tab(
           text: const Center(child: Text('Manage')),
