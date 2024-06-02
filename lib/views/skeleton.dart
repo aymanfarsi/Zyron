@@ -261,7 +261,7 @@ class _AppSkeletonState extends ConsumerState<AppSkeleton> {
                                     onPressed: () {
                                       pageIndex.value =
                                           AppPages.footerItems.indexOf(page) +
-                                              3;
+                                              4;
                                     },
                                   ),
                                 ),

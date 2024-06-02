@@ -1,48 +1,15 @@
 #!/bin/bash
 
-# https://distributor.leanflutter.dev/getting-started/
-
-# ------------------------------------------------------------------------------
-
-clean() {
-    rm -rf $1
-}
-
-# if output=$(clean build); then
-#     echo "Cleaned up build"
-# else
-#     echo "Failed to clean up build"
-#     exit 1
-# fi
-if output=$(clean dist); then
-    echo "Cleaned up dist"
-else
-    echo "Failed to clean up dist"
-    exit 1
-fi
-
-# ------------------------------------------------------------------------------
-
 platform=$(uname -s)
 echo "Platform: $platform"
 target=$1
-extension="bat"
 
 if [[ $platform == *Darwin* ]]; then
     target="macos"
-    extension="sh"
 elif [[ $platform == *Linux* ]]; then
     target="linux"
-    extension="sh"
 elif [[ $platform == *NT* ]]; then
     target="windows"
-    extension="bat"
-elif [[ target == "android" ]]; then
-    target="android"
-    extension="bat"
-elif [[ target == "ios" ]]; then
-    target="ios"
-    extension="sh"
 else
     echo "Unknown platform: $platform"
     exit 1
@@ -54,5 +21,5 @@ echo "Running pub get"
 flutter pub get
 echo "Building rust code"
 flutter_rust_bridge_codegen generate
-echo "Running: flutter_distributor.$extension release --name $target"
-flutter_distributor.$extension release --name $target
+echo "Building flutter app"
+flutter build $target
