@@ -54,5 +54,7 @@ echo "Running pub get"
 flutter pub get
 echo "Building rust code"
 flutter_rust_bridge_codegen generate
+echo "Updating flutter_distributor"
+flutter_distributor.$extension upgrade
 echo "Running: flutter_distributor.$extension release --name $target"
 flutter_distributor.$extension release --name $target
