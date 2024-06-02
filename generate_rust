@@ -1,0 +1,4 @@
+#!/bin/bash
+
+echo "Generating Rust bridge code"
+flutter_rust_bridge_codegen generate

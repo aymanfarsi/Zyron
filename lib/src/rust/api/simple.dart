@@ -8,6 +8,3 @@ import 'package:flutter_rust_bridge/flutter_rust_bridge_for_generated.dart';
 
 String greet({required String name, dynamic hint}) =>
     RustLib.instance.api.greet(name: name, hint: hint);
-
-void showToast({required String message, dynamic hint}) =>
-    RustLib.instance.api.showToast(message: message, hint: hint);

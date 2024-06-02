@@ -3,6 +3,7 @@ import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:go_router/go_router.dart';
 import 'package:zyron/apps/app.dart';
 import 'package:zyron/views/anime_view.dart';
+import 'package:zyron/views/football.dart';
 import 'package:zyron/views/help_view.dart';
 import 'package:zyron/views/settings_view.dart';
 import 'package:zyron/views/twitch_page/twitch_view.dart';
@@ -18,6 +19,7 @@ enum AppPages {
   youtube,
   twitch,
   anime,
+  football,
   settings,
   help;
 
@@ -29,6 +31,8 @@ enum AppPages {
         return FontAwesomeIcons.twitch;
       case AppPages.anime:
         return FontAwesomeIcons.dragon;
+      case AppPages.football:
+        return FontAwesomeIcons.futbol;
       case AppPages.settings:
         return FontAwesomeIcons.gear;
       case AppPages.help:
@@ -41,6 +45,7 @@ enum AppPages {
       AppPages.youtube,
       AppPages.twitch,
       AppPages.anime,
+      AppPages.football,
     ];
   }
 
@@ -59,6 +64,8 @@ enum AppPages {
         return const TwitchView();
       case AppPages.anime:
         return const AnimeView();
+      case AppPages.football:
+        return const FootballView();
       case AppPages.settings:
         return const SettingsView();
       case AppPages.help:
@@ -74,10 +81,12 @@ enum AppPages {
         return 1;
       case AppPages.anime:
         return 2;
-      case AppPages.settings:
+      case AppPages.football:
         return 3;
-      case AppPages.help:
+      case AppPages.settings:
         return 4;
+      case AppPages.help:
+        return 5;
     }
   }
 
@@ -89,6 +98,8 @@ enum AppPages {
         return 'Twitch';
       case AppPages.anime:
         return 'Anime';
+      case AppPages.football:
+        return 'Football';
       case AppPages.settings:
         return 'Settings';
       case AppPages.help:

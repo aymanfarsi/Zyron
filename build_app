@@ -8,12 +8,12 @@ clean() {
     rm -rf $1
 }
 
-if output=$(clean build); then
-    echo "Cleaned up build"
-else
-    echo "Failed to clean up build"
-    exit 1
-fi
+# if output=$(clean build); then
+#     echo "Cleaned up build"
+# else
+#     echo "Failed to clean up build"
+#     exit 1
+# fi
 if output=$(clean dist); then
     echo "Cleaned up dist"
 else

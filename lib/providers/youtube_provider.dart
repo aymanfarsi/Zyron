@@ -7,7 +7,6 @@ import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:youtube_explode_dart/youtube_explode_dart.dart';
 import 'package:zyron/models/youtube_channel_model.dart';
-import 'package:zyron/src/rust/api/simple.dart';
 
 part 'youtube_provider.g.dart';
 
@@ -46,24 +45,22 @@ class YouTubeList extends _$YouTubeList {
 
   Future<void> addChannel(YouTubeChannelModel channel) async {
     if (state.any((c) => c.id == channel.id)) {
-      showToast(message: 'Channel already exists');
       debugPrint('Channel already exists');
       return;
     }
     state = [...state, channel];
-    showToast(message: 'Channel added');
+
     debugPrint('Channel added');
     await saveChannels();
   }
 
   Future<void> removeChannel(YouTubeChannelModel channel) async {
     if (!state.any((c) => c.id == channel.id)) {
-      showToast(message: 'Channel does not exist');
       debugPrint('Channel does not exist');
       return;
     }
     state = state.where((c) => c.id != channel.id).toList();
-    showToast(message: 'Channel removed');
+
     debugPrint('Channel removed');
     await saveChannels();
   }
@@ -73,7 +70,6 @@ class YouTubeList extends _$YouTubeList {
     required int newIndex,
   }) async {
     if (oldIndex == newIndex) {
-      showToast(message: 'Same index');
       debugPrint('Same index');
       return;
     }
@@ -81,7 +77,7 @@ class YouTubeList extends _$YouTubeList {
     final channel = channels.removeAt(oldIndex);
     channels.insert(newIndex, channel);
     state = channels;
-    showToast(message: 'Channel reordered');
+
     debugPrint('Channel reordered');
     await saveChannels();
   }
@@ -99,7 +95,7 @@ class YouTubeList extends _$YouTubeList {
     final index = channels.indexWhere((c) => c.id == channel.id);
     channels[index] = updatedChannel;
     state = channels;
-    showToast(message: 'Channel refreshed');
+
     debugPrint('Channel refreshed');
     await saveChannels();
   }
@@ -111,14 +107,14 @@ class YouTubeList extends _$YouTubeList {
   void decodeChannels(String json) {
     final List<dynamic> decodedJson = jsonDecode(json);
     state = decodedJson.map((c) => YouTubeChannelModel.fromJson(c)).toList();
-    showToast(message: 'Channels loaded');
+
     debugPrint('${state.length} Channel(s) loaded');
   }
 
   Future<void> saveChannels() async {
     final SharedPreferences prefs = await SharedPreferences.getInstance();
     await prefs.setString('zyron_channels', encodeChannels());
-    showToast(message: 'Channels saved');
+
     debugPrint('${state.length} Channel(s) saved');
   }
 
@@ -144,11 +140,10 @@ class YouTubeList extends _$YouTubeList {
       File file = File('$selectedDirectory/zyron_channels.json');
       String encodedJson = encodeChannels();
       await file.writeAsString(encodedJson);
-      showToast(message: 'Channels exported');
+
       debugPrint('Channels exported');
       return true;
     } catch (e) {
-      showToast(message: 'Export Channels Error: $e');
       debugPrint('Save Channels Error: $e');
       return false;
     }
@@ -173,7 +168,6 @@ class YouTubeList extends _$YouTubeList {
       decodeChannels(json);
       return true;
     } catch (e) {
-      showToast(message: 'Restore Channels Error: $e');
       debugPrint('Load Channels Error: $e');
       return false;
     }

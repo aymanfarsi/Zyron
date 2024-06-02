@@ -7,7 +7,6 @@ import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:zyron/models/app_settings_model.dart';
 import 'package:zyron/models/player_settings_model.dart';
-import 'package:zyron/src/rust/api/simple.dart';
 
 part 'app_settings_provider.g.dart';
 
@@ -137,7 +136,6 @@ class AppSettings extends _$AppSettings {
     final SharedPreferences prefs = await SharedPreferences.getInstance();
     String encodedJson = jsonEncode(state.toJson());
     await prefs.setString('zyron_settings', encodedJson);
-    showToast(message: 'Settings saved');
   }
 
   Future<AppSettingsModel> loadSettings() async {
@@ -167,7 +165,6 @@ class AppSettings extends _$AppSettings {
 
       return true;
     } catch (e) {
-      showToast(message: 'Export Settings Error: $e');
       debugPrint('Save Settings Error: $e');
 
       return false;
@@ -195,7 +192,6 @@ class AppSettings extends _$AppSettings {
 
       return true;
     } catch (e) {
-      showToast(message: 'Restore Settings Error: $e');
       debugPrint('Load Settings Error: $e');
 
       return false;
