@@ -20,8 +20,11 @@ pub struct Stage {
 
 // #[flutter_rust_bridge::frb(sync)]
 pub async fn scrape_live_score() -> Result<Vec<Stage>, String> {
-    let url =
-        "https://prod-public-api.livescore.com/v1/api/app/date/soccer/20240601/-4?locale=en&MD=1";
+    let year_month_day = chrono::Utc::now().format("%Y%m%d").to_string();
+    let url = format!(
+        "https://prod-public-api.livescore.com/v1/api/app/date/soccer/{}/-4?locale=en&MD=1",
+        year_month_day
+    );
     let response = get(url).await.expect("Failed to fetch live scores");
 
     if !response.status().is_success() {
