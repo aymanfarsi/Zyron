@@ -17,9 +17,12 @@ fi
 
 # ------------------------------------------------------------------------------
 
-echo "Running pub get"
-flutter pub get
-echo "Building rust code"
-flutter_rust_bridge_codegen generate
+echo "Generating files"
+if [[ $platform == *NT* ]]; then
+    sh generate_files
+else
+    ./generate_files
+fi
+
 echo "Building flutter app"
 flutter build $target

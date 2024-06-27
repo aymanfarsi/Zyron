@@ -3,5 +3,8 @@
 echo "Generating Rust bridge code"
 flutter_rust_bridge_codegen generate
 
+echo "Creating launcher icons"
+flutter pub run flutter_launcher_icons
+
 echo "Running build_runner"
 dart run build_runner build -d

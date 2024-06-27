@@ -138,9 +138,8 @@ ThemeData catppuccinTheme(Flavor flavor) {
       bodyColor: flavor.text,
       displayColor: primaryColor,
     ),
-    floatingActionButtonTheme: const FloatingActionButtonThemeData(
-      elevation: 0,
-    ),
+    floatingActionButtonTheme:
+        const FloatingActionButtonThemeData(elevation: 3),
   );
 }
 

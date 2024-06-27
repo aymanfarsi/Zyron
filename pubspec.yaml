@@ -1,6 +1,6 @@
 name: zyron
 description: "A multi-platform entertainment app for Twitch, YouTube, and more. Written in Rust and Flutter."
-publish_to: 'none' # Remove this line if you wish to publish to pub.dev
+publish_to: "none" # Remove this line if you wish to publish to pub.dev
 
 version: 0.7.1
 
@@ -62,8 +62,12 @@ flutter:
     - assets/
 
 flutter_launcher_icons:
-  image_path: "assets/zyron_icon.ico"
+  image_path: "assets/zyron_icon.png"
+  
+  linux: true
+
   windows:
     generate: true
+    image_path: "assets/zyron_icon.ico"
     # min:48, max:256, default: 48
     icon_size: 48

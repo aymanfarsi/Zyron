@@ -8,12 +8,13 @@ clean() {
     rm -rf $1
 }
 
-if output=$(clean build); then
-    echo "Cleaned up build"
-else
-    echo "Failed to clean up build"
-    exit 1
-fi
+# if output=$(clean build); then
+#     echo "Cleaned up build"
+# else
+#     echo "Failed to clean up build"
+#     exit 1
+# fi
+
 if output=$(clean dist); then
     echo "Cleaned up dist"
 else
@@ -30,19 +31,17 @@ extension="bat"
 
 if [[ $platform == *Darwin* ]]; then
     target="macos"
-    extension="sh"
+    extension=""
 elif [[ $platform == *Linux* ]]; then
     target="linux"
-    extension="sh"
+    extension=""
 elif [[ $platform == *NT* ]]; then
     target="windows"
-    extension="bat"
+    extension=".bat"
 elif [[ target == "android" ]]; then
-    target="android"
-    extension="bat"
+    exit 1
 elif [[ target == "ios" ]]; then
-    target="ios"
-    extension="sh"
+    exit 1
 else
     echo "Unknown platform: $platform"
     exit 1
@@ -50,11 +49,15 @@ fi
 
 # ------------------------------------------------------------------------------
 
-echo "Running pub get"
-flutter pub get
-echo "Building rust code"
-flutter_rust_bridge_codegen generate
+echo "Generating files"
+if [[ $platform == *NT* ]]; then
+    sh ./generate_files
+else
+    ./generate_files
+fi
+
 echo "Updating flutter_distributor"
-flutter_distributor.$extension upgrade
+flutter_distributor$extension upgrade
+
 echo "Running: flutter_distributor.$extension release --name $target"
-flutter_distributor.$extension release --name $target
+flutter_distributor$extension release --name $target
