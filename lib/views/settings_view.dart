@@ -1,4 +1,4 @@
-import 'package:fluent_ui/fluent_ui.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:gap/gap.dart';
 import 'package:go_router/go_router.dart';
@@ -50,7 +50,7 @@ class SettingsView extends HookConsumerWidget {
                       ),
                     ),
                     const Spacer(),
-                    Button(
+                    ElevatedButton(
                       onPressed: () async {
                         await ref
                             .read(appSettingsProvider.notifier)
@@ -70,92 +70,77 @@ class SettingsView extends HookConsumerWidget {
                   _SettingItem(
                     title: 'Theme mode',
                     subtitle: 'Toggle dark mode',
-                    child: ToggleSwitch(
-                      checked: appSettings.isDarkMode,
+                    child: Switch(
+                      value: appSettings.isDarkMode,
                       onChanged: (value) {
                         ref
                             .read(appSettingsProvider.notifier)
                             .setDarkMode(value);
                       },
-                      content: Text(
-                        appSettings.isDarkMode ? 'Dark' : 'Light',
-                      ),
                     ),
                   ),
                   _SettingItem(
                     title: 'Always on Top',
                     subtitle: 'Toggle always on top',
-                    child: ToggleSwitch(
-                      checked: appSettings.isAlwaysOnTop,
+                    child: Switch(
+                      value: appSettings.isAlwaysOnTop,
                       onChanged: (value) {
                         ref
                             .read(appSettingsProvider.notifier)
                             .setAlwaysOnTop(value);
                       },
-                      content: Text(
-                        appSettings.isAlwaysOnTop ? 'On' : 'Off',
-                      ),
                     ),
                   ),
                   _SettingItem(
                     title: 'Prevent close',
                     subtitle: 'Confirm before closing',
-                    child: ToggleSwitch(
-                      checked: appSettings.isPreventClose,
+                    child: Switch(
+                      value: appSettings.isPreventClose,
                       onChanged: (value) {
                         ref
                             .read(appSettingsProvider.notifier)
                             .setPreventClose(value);
                       },
-                      content: Text(
-                        appSettings.isPreventClose ? 'On' : 'Off',
-                      ),
                     ),
                   ),
                   _SettingItem(
                     title: 'Auto start',
                     subtitle: 'Start app on login',
-                    child: ToggleSwitch(
-                      checked: appSettings.isAutoStart,
+                    child: Switch(
+                      value: appSettings.isAutoStart,
                       onChanged: (value) {
                         ref
                             .read(appSettingsProvider.notifier)
                             .setAutoStart(value);
                       },
-                      content: Text(
-                        appSettings.isAutoStart ? 'On' : 'Off',
-                      ),
                     ),
                   ),
                   _SettingItem(
                     title: 'Maximized on start',
                     subtitle: 'Start app maximized',
-                    child: ToggleSwitch(
-                      checked: appSettings.isMaximizedOnStart,
+                    child: Switch(
+                      value: appSettings.isMaximizedOnStart,
                       onChanged: (value) {
                         ref
                             .read(appSettingsProvider.notifier)
                             .setMaximizedOnStart(value);
                       },
-                      content: Text(
-                        appSettings.isMaximizedOnStart ? 'On' : 'Off',
-                      ),
                     ),
                   ),
                   _SettingItem(
                     title: 'Starting page',
                     subtitle: 'Select starting page',
-                    child: ComboBox<String>(
-                      value: appSettings.startingPage.toString(),
-                      items: AppPages.values
-                          .map((e) => ComboBoxItem(
-                                value: e.idx.toString(),
-                                child: Text(
-                                  e.name,
-                                ),
-                              ))
+                    child: DropdownMenu<String>(
+                      initialSelection: appSettings.startingPage.toString(),
+                      dropdownMenuEntries: AppPages.values
+                          .map(
+                            (e) => DropdownMenuEntry(
+                              value: e.idx.toString(),
+                              label: e.name,
+                            ),
+                          )
                           .toList(growable: false),
-                      onChanged: (String? value) {
+                      onSelected: (String? value) {
                         if (value == null) return;
                         ref
                             .read(appSettingsProvider.notifier)
@@ -173,65 +158,58 @@ class SettingsView extends HookConsumerWidget {
                     title: 'MPV executable',
                     subtitle:
                         'MPV executable command must be accessible in PATH',
-                    child: TextBox(
+                    child: TextField(
                       focusNode: mpvFocusNode,
                       controller: mpvController,
-                      placeholder: 'MPV executable',
-                      decoration: boxDecoration.copyWith(
-                        border: const Border.symmetric(
-                          horizontal: BorderSide.none,
+                      decoration: InputDecoration(
+                        border: const OutlineInputBorder(),
+                        contentPadding: const EdgeInsets.all(8.0),
+                        hintText: 'MPV executable',
+                        suffixIcon: IconButton(
+                          icon: const Icon(Icons.save),
+                          onPressed: () {
+                            ref
+                                .read(appSettingsProvider.notifier)
+                                .setPlayerMpvExe(mpvController.text);
+
+                            mpvFocusNode.unfocus();
+                          },
                         ),
-                        borderRadius: BorderRadius.circular(8.0),
                       ),
                       onSubmitted: (value) {
                         ref
                             .read(appSettingsProvider.notifier)
                             .setPlayerMpvExe(value);
                       },
-                      suffix: IconButton(
-                        icon: const Icon(FluentIcons.save),
-                        style: const ButtonStyle(),
-                        onPressed: () {
-                          ref
-                              .read(appSettingsProvider.notifier)
-                              .setPlayerMpvExe(mpvController.text);
-
-                          mpvFocusNode.unfocus();
-                        },
-                      ),
                     ),
                   ),
                   _SettingItem(
                     title: 'Quality',
                     subtitle:
                         'Quality settings for player (e.g. 1080p, 720p, etc.)',
-                    child: TextBox(
-                      focusNode: qualityFocusNode,
-                      controller: qualityController,
-                      placeholder: 'Quality',
-                      decoration: boxDecoration.copyWith(
-                        border: const Border.symmetric(
-                          horizontal: BorderSide.none,
+                    child: TextField(
+                        focusNode: qualityFocusNode,
+                        controller: qualityController,
+                        decoration: InputDecoration(
+                          border: const OutlineInputBorder(),
+                          contentPadding: const EdgeInsets.all(8.0),
+                          hintText: 'Quality',
+                          suffixIcon: IconButton(
+                            icon: const Icon(Icons.save),
+                            onPressed: () {
+                              ref
+                                  .read(appSettingsProvider.notifier)
+                                  .setPlayerQuality(qualityController.text);
+
+                              qualityFocusNode.unfocus();
+                            },
+                          ),
                         ),
-                        borderRadius: BorderRadius.circular(8.0),
-                      ),
-                      onSubmitted: (value) {
-                        ref
-                            .read(appSettingsProvider.notifier)
-                            .setPlayerQuality(value);
-                      },
-                      suffix: IconButton(
-                        icon: const Icon(FluentIcons.save),
-                        style: const ButtonStyle(),
-                        onPressed: () {
+                        onSubmitted: (value) {
                           ref
                               .read(appSettingsProvider.notifier)
-                              .setPlayerQuality(qualityController.text);
-
-                          qualityFocusNode.unfocus();
-                        },
-                      ),
-                    ),
+                              .setPlayerQuality(value);
+                        }),
                   ),
                 ],
               ),
@@ -244,7 +222,7 @@ class SettingsView extends HookConsumerWidget {
                   _SettingItem(
                     title: 'Export app settings',
                     subtitle: 'Export to file',
-                    child: Button(
+                    child: ElevatedButton(
                       onPressed: () async {
                         await ref
                             .read(appSettingsProvider.notifier)
@@ -259,7 +237,7 @@ class SettingsView extends HookConsumerWidget {
                   _SettingItem(
                     title: 'Restore app settings',
                     subtitle: 'Restore all settings',
-                    child: Button(
+                    child: ElevatedButton(
                       onPressed: () async {
                         await ref
                             .read(appSettingsProvider.notifier)
@@ -275,7 +253,7 @@ class SettingsView extends HookConsumerWidget {
                   _SettingItem(
                     title: 'Export YouTube channels',
                     subtitle: 'Export to file',
-                    child: Button(
+                    child: ElevatedButton(
                       onPressed: () async {
                         await ref
                             .read(youTubeListProvider.notifier)
@@ -290,7 +268,7 @@ class SettingsView extends HookConsumerWidget {
                   _SettingItem(
                     title: 'Restore YouTube channels',
                     subtitle: 'Restore all channels',
-                    child: Button(
+                    child: ElevatedButton(
                       onPressed: () async {
                         await ref
                             .read(youTubeListProvider.notifier)
@@ -306,7 +284,7 @@ class SettingsView extends HookConsumerWidget {
                   _SettingItem(
                     title: 'Export Twitch streamers',
                     subtitle: 'Export to file',
-                    child: Button(
+                    child: ElevatedButton(
                       onPressed: () async {
                         await ref
                             .read(twitchListProvider.notifier)
@@ -321,7 +299,7 @@ class SettingsView extends HookConsumerWidget {
                   _SettingItem(
                     title: 'Restore Twitch streamers',
                     subtitle: 'Restore all streamers',
-                    child: Button(
+                    child: ElevatedButton(
                       onPressed: () async {
                         await ref
                             .read(twitchListProvider.notifier)
@@ -339,12 +317,12 @@ class SettingsView extends HookConsumerWidget {
                     subtitle: 'Reset all settings',
                     child: MouseRegion(
                       cursor: SystemMouseCursors.help,
-                      child: Button(
+                      child: ElevatedButton(
                         onPressed: () async {
                           await showDialog(
                             context: context,
                             builder: (context) {
-                              return ContentDialog(
+                              return AlertDialog(
                                 title: const Text('Reset settings'),
                                 content: const Text(
                                   '''Are you sure you want to reset all settings?
@@ -356,13 +334,13 @@ Save after reset to apply changes.''',
                                   textAlign: TextAlign.justify,
                                 ),
                                 actions: <Widget>[
-                                  Button(
+                                  ElevatedButton(
                                     onPressed: () {
                                       context.pop();
                                     },
                                     child: const Text('Cancel'),
                                   ),
-                                  Button(
+                                  ElevatedButton(
                                     onPressed: () {
                                       ref
                                           .read(appSettingsProvider.notifier)
@@ -371,7 +349,7 @@ Save after reset to apply changes.''',
                                     },
                                     style: ButtonStyle(
                                       backgroundColor:
-                                          ButtonState.all(Colors.red),
+                                          WidgetStateProperty.all(Colors.red),
                                     ),
                                     child: const Text('Confirm'),
                                   ),
@@ -381,9 +359,7 @@ Save after reset to apply changes.''',
                           );
                         },
                         style: ButtonStyle(
-                          backgroundColor: ButtonState.all(
-                            Colors.red,
-                          ),
+                          backgroundColor: WidgetStateProperty.all(Colors.red),
                         ),
                         child: const Text(
                           'Reset',
@@ -450,31 +426,24 @@ class _Section extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Expander(
+    return ExpansionTile(
       initiallyExpanded: true,
-      contentBackgroundColor: Colors.transparent,
-      contentShape: (open) {
-        return const RoundedRectangleBorder(side: BorderSide.none);
-      },
-      headerShape: (open) {
-        return RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(8.0),
-          side: BorderSide(
-            color: Colors.grey.withOpacity(0.5),
-            width: 0.5,
-          ),
-        );
-      },
-      contentPadding: const EdgeInsets.all(0),
-      header: Text(
+      backgroundColor: Colors.transparent,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(8.0),
+        side: BorderSide(
+          color: Colors.grey.withOpacity(0.5),
+          width: 0.5,
+        ),
+      ),
+      childrenPadding: const EdgeInsets.all(0),
+      title: Text(
         header,
         style: const TextStyle(
           fontWeight: FontWeight.bold,
         ),
       ),
-      content: Column(
-        children: items,
-      ),
+      children: items,
     );
   }
 }

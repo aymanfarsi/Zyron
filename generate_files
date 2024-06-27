@@ -2,3 +2,6 @@
 
 echo "Generating Rust bridge code"
 flutter_rust_bridge_codegen generate
+
+echo "Running build_runner"
+dart run build_runner build -d

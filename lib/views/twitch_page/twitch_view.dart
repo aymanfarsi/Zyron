@@ -1,5 +1,4 @@
-import 'package:fluent_ui/fluent_ui.dart';
-import 'package:flutter/material.dart' show CircularProgressIndicator, Icons;
+import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:gap/gap.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
@@ -17,56 +16,75 @@ class TwitchView extends HookConsumerWidget {
     final tabIndex = useState<int>(0);
     final isFetching = useState<bool>(false);
 
-    return TabView(
-      currentIndex: tabIndex.value,
-      onChanged: (index) => tabIndex.value = index,
-      tabWidthBehavior: TabWidthBehavior.equal,
-      minTabWidth: 75.0,
-      maxTabWidth: 125.0,
-      closeButtonVisibility: CloseButtonVisibilityMode.never,
-      showScrollButtons: false,
-      shortcutsEnabled: false,
-      footer: Padding(
-        padding: const EdgeInsets.only(right: 3.0),
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.end,
-          children: [
-            Text(
-              '${twitchList.where((t) => t.isLive).length} Live Channels',
-            ),
-            const Gap(9),
-            Button(
-              style: ButtonStyle(
-                elevation: ButtonState.all(2.0),
+    return DefaultTabController(
+      initialIndex: tabIndex.value,
+      length: 2,
+      child: Column(
+        children: [
+          Row(
+            mainAxisAlignment: MainAxisAlignment.end,
+            children: [
+              Padding(
+                padding: const EdgeInsets.only(right: 3.0),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.end,
+                  children: [
+                    Text(
+                      '${twitchList.where((t) => t.isLive).length} Live Channels',
+                    ),
+                    const Gap(9),
+                    ElevatedButton(
+                      style: ButtonStyle(
+                        elevation: WidgetStateProperty.all(2.0),
+                      ),
+                      onPressed: () async {
+                        isFetching.value = true;
+                        await ref
+                            .read(twitchListProvider.notifier)
+                            .refreshStreamers();
+                        isFetching.value = false;
+                      },
+                      child: const Text(
+                        'Refresh ',
+                      ),
+                    ),
+                  ],
+                ),
               ),
-              onPressed: () async {
-                isFetching.value = true;
-                await ref.read(twitchListProvider.notifier).refreshStreamers();
-                isFetching.value = false;
-              },
-              child: const Text(
-                'Refresh ',
+            ],
+          ),
+          TabBar(
+            onTap: (index) {
+              tabIndex.value = index;
+            },
+            tabs: const <Widget>[
+              Tab(
+                text: 'Streamers',
+                icon: Icon(Icons.video_collection_outlined),
+              ),
+              Tab(
+                text: 'Manage',
+                icon: Icon(Icons.manage_accounts_outlined),
+              ),
+            ],
+          ),
+          Expanded(
+            child: Padding(
+              padding: const EdgeInsets.only(top: 8.0),
+              child: TabBarView(
+                children: <Widget>[
+                  isFetching.value
+                      ? const Center(
+                          child: CircularProgressIndicator(),
+                        )
+                      : const ListStreamers(),
+                  const ManageStreamers(),
+                ],
               ),
             ),
-          ],
-        ),
+          ),
+        ],
       ),
-      tabs: [
-        Tab(
-          text: const Center(child: Text('Streamers')),
-          icon: const Icon(Icons.video_collection_outlined),
-          body: isFetching.value
-              ? const Center(
-                  child: CircularProgressIndicator(),
-                )
-              : const ListStreamers(),
-        ),
-        Tab(
-          text: const Center(child: Text('Manage')),
-          icon: const Icon(Icons.manage_accounts_outlined),
-          body: const ManageStreamers(),
-        ),
-      ],
     );
   }
 }

@@ -1,14 +1,11 @@
 // ignore_for_file: use_build_context_synchronously
 
+import 'package:flutter/material.dart';
 import 'package:desktop_context_menu/desktop_context_menu.dart';
-import 'package:fluent_ui/fluent_ui.dart'
-    show Button, ButtonState, ButtonStyle, Card, ContentDialog, TextBox;
-import 'package:flutter/material.dart' hide ButtonStyle, Card, TextBox;
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:go_router/go_router.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:zyron/providers/twitch_provider.dart';
-import 'package:zyron/views/components.dart';
 
 class ManageStreamers extends HookConsumerWidget {
   const ManageStreamers({super.key});
@@ -73,19 +70,19 @@ class ManageStreamers extends HookConsumerWidget {
                               await showDialog(
                                 context: context,
                                 builder: (context) {
-                                  return ContentDialog(
+                                  return AlertDialog(
                                     title: const Text('Remove Channel'),
                                     content: Text(
                                       'Are you sure you want to remove ${twitchList[index].displayName}?',
                                     ),
                                     actions: <Widget>[
-                                      Button(
+                                      ElevatedButton(
                                         onPressed: () {
                                           context.pop();
                                         },
                                         child: const Text('Cancel'),
                                       ),
-                                      Button(
+                                      ElevatedButton(
                                         onPressed: () async {
                                           await ref
                                               .read(twitchListProvider.notifier)
@@ -95,7 +92,9 @@ class ManageStreamers extends HookConsumerWidget {
                                         },
                                         style: ButtonStyle(
                                           backgroundColor:
-                                              ButtonState.all(Colors.red),
+                                              WidgetStateProperty.all(
+                                            Colors.red,
+                                          ),
                                         ),
                                         child: const Text('Remove'),
                                       ),
@@ -116,8 +115,9 @@ class ManageStreamers extends HookConsumerWidget {
                             }
                           },
                           child: Card(
-                            borderRadius: BorderRadius.circular(12.0),
-                            padding: const EdgeInsets.all(8.0),
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(8.0),
+                            ),
                             child: ListTile(
                               title: Text(
                                 twitchList[index].displayName,
@@ -162,18 +162,19 @@ class ManageStreamers extends HookConsumerWidget {
                 context: context,
                 barrierDismissible: false,
                 builder: (context) {
-                  return ContentDialog(
+                  return AlertDialog(
                     title: const Text('Add Streamer'),
                     content: SizedBox(
                       height: 40.0,
                       width: 300.0,
-                      child: TextBox(
+                      child: TextField(
                         controller: input,
-                        placeholder: 'Enter username or paste URL',
-                        decoration: boxDecoration.copyWith(
-                          border: const Border.symmetric(
-                            horizontal: BorderSide.none,
+                        decoration: InputDecoration(
+                          border: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(8.0),
                           ),
+                          contentPadding: const EdgeInsets.all(8.0),
+                          hintText: 'Enter username or paste URL',
                         ),
                         onSubmitted: (value) async {
                           final text = input.text;
@@ -186,11 +187,11 @@ class ManageStreamers extends HookConsumerWidget {
                             await showDialog(
                               context: context,
                               builder: (context) {
-                                return ContentDialog(
+                                return AlertDialog(
                                   title: const Text('Error'),
                                   content: const Text('Streamer not found'),
                                   actions: <Widget>[
-                                    Button(
+                                    ElevatedButton(
                                       onPressed: () {
                                         context.pop();
                                       },
@@ -211,14 +212,14 @@ class ManageStreamers extends HookConsumerWidget {
                       ),
                     ),
                     actions: [
-                      Button(
+                      ElevatedButton(
                         onPressed: () {
                           input.clear();
                           context.pop();
                         },
                         child: const Text('Cancel'),
                       ),
-                      Button(
+                      ElevatedButton(
                         onPressed: () async {
                           final text = input.text;
                           if (text.isEmpty) return;
@@ -230,11 +231,11 @@ class ManageStreamers extends HookConsumerWidget {
                             await showDialog(
                               context: context,
                               builder: (context) {
-                                return ContentDialog(
+                                return AlertDialog(
                                   title: const Text('Error'),
                                   content: const Text('Streamer not found'),
                                   actions: <Widget>[
-                                    Button(
+                                    ElevatedButton(
                                       onPressed: () {
                                         context.pop();
                                       },

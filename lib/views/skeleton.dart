@@ -1,5 +1,4 @@
-import 'package:fluent_ui/fluent_ui.dart';
-import 'package:flutter/material.dart' show Scaffold, Icons;
+import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:gap/gap.dart';
@@ -17,7 +16,6 @@ class AppSkeleton extends StatefulHookConsumerWidget {
 }
 
 class _AppSkeletonState extends ConsumerState<AppSkeleton> {
-  final menuController = FlyoutController();
   final contextAttachKey = GlobalKey();
 
   @override
@@ -65,21 +63,6 @@ class _AppSkeletonState extends ConsumerState<AppSkeleton> {
                               fit: BoxFit.cover,
                             ),
                           ),
-                          // child: GestureDetector(
-                          //   onTap: () {
-                          //     ref
-                          //         .read(appSettingsProvider.notifier)
-                          //         .setAlwaysOnTop(!appSettings.isAlwaysOnTop);
-                          //   },
-                          //   child: Container(
-                          //     height: 32.0,
-                          //     width: 32.0,
-                          //     decoration: BoxDecoration(
-                          //       color: Colors.yellow,
-                          //       shape: BoxShape.circle,
-                          //     ),
-                          //   ),
-                          // ),
                         ),
                         SizedBox(
                           width: constraints.maxWidth - 189.0,
@@ -95,100 +78,23 @@ class _AppSkeletonState extends ConsumerState<AppSkeleton> {
                                   ),
                                 ),
                               ),
-                              FlyoutTarget(
-                                controller: menuController,
-                                child: GestureDetector(
-                                  // ! Double tap to maximize
-                                  onDoubleTap: () async {
-                                    if (await windowManager.isMaximized()) {
-                                      await windowManager.restore();
-                                    } else {
-                                      await windowManager.maximize();
-                                    }
-                                  },
-                                  // ! Drag to move
-                                  onPanStart: (details) async {
-                                    await windowManager.startDragging();
-                                  },
-                                  // ! Titlebar context menu
-                                  onSecondaryTapUp: (details) {
-                                    const size = 100.0;
-
-                                    final targetContext =
-                                        contextAttachKey.currentContext;
-                                    if (targetContext == null) return;
-                                    final box = targetContext.findRenderObject()
-                                        as RenderBox;
-                                    final position = box.localToGlobal(
-                                      details.localPosition,
-                                      ancestor: Navigator.of(context)
-                                          .context
-                                          .findRenderObject(),
-                                    );
-                                    final centeredPosition = Offset(
-                                        position.dx - (size / 2), position.dy);
-
-                                    menuController.showFlyout(
-                                      barrierColor:
-                                          Colors.black.withOpacity(0.1),
-                                      barrierDismissible: true,
-                                      dismissOnPointerMoveAway: false,
-                                      dismissWithEsc: true,
-                                      position: centeredPosition,
-                                      builder: (context) {
-                                        return MenuFlyout(
-                                          shape: const RoundedRectangleBorder(
-                                            borderRadius: BorderRadius.all(
-                                              Radius.circular(9.0),
-                                            ),
-                                          ),
-                                          items: [
-                                            MenuFlyoutItem(
-                                              text: const Text('Always on Top'),
-                                              leading: Icon(
-                                                appSettings.isAlwaysOnTop
-                                                    ? Icons.check
-                                                    : Icons.close,
-                                              ),
-                                              onPressed: () {
-                                                ref
-                                                    .read(appSettingsProvider
-                                                        .notifier)
-                                                    .setAlwaysOnTop(!appSettings
-                                                        .isAlwaysOnTop);
-                                              },
-                                            ),
-                                            MenuFlyoutItem(
-                                              text:
-                                                  const Text('Confirm on exit'),
-                                              leading: Icon(
-                                                appSettings.isPreventClose
-                                                    ? Icons.check
-                                                    : Icons.close,
-                                              ),
-                                              onPressed: () {
-                                                ref
-                                                    .read(appSettingsProvider
-                                                        .notifier)
-                                                    .setPreventClose(
-                                                        !appSettings
-                                                            .isPreventClose);
-                                              },
-                                            ),
-                                          ],
-                                        );
-                                      },
-                                    );
-                                  },
-                                  child: FlyoutTarget(
-                                    key: contextAttachKey,
-                                    controller: menuController,
-                                    child: Container(
-                                      height: 50.0,
-                                      width: constraints.maxWidth - 190.0,
-                                      color: Colors.transparent,
-                                    ),
-                                  ),
+                              GestureDetector(
+                                // ! Double tap to maximize
+                                onDoubleTap: () async {
+                                  if (await windowManager.isMaximized()) {
+                                    await windowManager.restore();
+                                  } else {
+                                    await windowManager.maximize();
+                                  }
+                                },
+                                // ! Drag to move
+                                onPanStart: (details) async {
+                                  await windowManager.startDragging();
+                                },
+                                child: Container(
+                                  height: 50.0,
+                                  width: constraints.maxWidth - 190.0,
+                                  color: Colors.transparent,
                                 ),
                               ),
                             ],

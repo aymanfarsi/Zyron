@@ -1,15 +1,7 @@
 import 'dart:io';
 
+import 'package:flutter/material.dart';
 import 'package:catppuccin_flutter/catppuccin_flutter.dart';
-import 'package:fluent_ui/fluent_ui.dart';
-import 'package:flutter/material.dart'
-    show
-        ThemeData,
-        AppBarTheme,
-        TextTheme,
-        ColorScheme,
-        FloatingActionButtonThemeData
-    hide ScrollbarThemeData;
 import 'package:flutter/services.dart';
 import 'package:win32_registry/win32_registry.dart';
 import 'package:zyron/models/player_settings_model.dart';
@@ -115,46 +107,6 @@ String formatSubscribers(int subscribers) {
     return '${(subscribers / 1000000000).toStringAsFixed(1)}B';
   }
 }
-
-// FluentThemeData materialToFluentThemeData(ThemeData theme) {
-//   return FluentThemeData.raw(
-//     typography: theme.typography,
-//     extensions: theme.extensions,
-//     accentColor: theme.accentColor,
-//     activeColor: theme.activeColor,
-//     inactiveColor: theme.inactiveColor,
-//     inactiveBackgroundColor: theme.inactiveBackgroundColor,
-//     shadowColor: theme.shadowColor,
-//     fasterAnimationDuration: theme.fasterAnimationDuration,
-//     fastAnimationDuration: theme.fastAnimationDuration,
-//     mediumAnimationDuration: theme.mediumAnimationDuration,
-//     slowAnimationDuration: theme.slowAnimationDuration,
-//     animationCurve: theme.animationCurve,
-//     brightness: theme.brightness,
-//     visualDensity: theme.visualDensity,
-//     scaffoldBackgroundColor: theme.scaffoldBackgroundColor,
-//     acrylicBackgroundColor: theme.acrylicBackgroundColor,
-//     micaBackgroundColor: theme.micaBackgroundColor,
-//     buttonTheme: theme.buttonTheme,
-//     checkboxTheme: theme.checkboxTheme,
-//     toggleSwitchTheme: theme.toggleSwitchTheme,
-//     bottomNavigationTheme: theme.bottomNavigationTheme,
-//     iconTheme: theme.iconTheme,
-//     dialogTheme: theme.dialogTheme,
-//     tooltipTheme: theme.tooltipTheme,
-//     dividerTheme: theme.dividerTheme,
-//     navigationPaneTheme: theme.navigationPaneTheme,
-//     radioButtonTheme: theme.radioButtonTheme,
-//     toggleButtonTheme: theme.toggleButtonTheme,
-//     sliderTheme: theme.sliderTheme,
-//     infoBarTheme: theme.infoBarTheme,
-//     focusTheme: theme.focusTheme,
-//     scrollbarTheme: theme.scrollbarTheme,
-//     cardColor: theme.cardColor,
-//     selectionColor:
-//         theme.textSelectionTheme.selectionColor ?? theme.primaryColor,
-//   );
-// }
 
 ThemeData catppuccinTheme(Flavor flavor) {
   Color primaryColor = flavor.mauve;

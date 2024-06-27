@@ -1,9 +1,7 @@
 // ignore_for_file: use_build_context_synchronously
 
+import 'package:flutter/material.dart';
 import 'package:desktop_context_menu/desktop_context_menu.dart';
-import 'package:fluent_ui/fluent_ui.dart'
-    show ContentDialog, Button, ButtonStyle, ButtonState, Card;
-import 'package:flutter/material.dart' hide ButtonStyle, Card;
 import 'package:go_router/go_router.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:zyron/providers/youtube_provider.dart';
@@ -65,19 +63,19 @@ class ManageChannels extends HookConsumerWidget {
                           await showDialog(
                             context: context,
                             builder: (context) {
-                              return ContentDialog(
+                              return AlertDialog(
                                 title: const Text('Remove Channel'),
                                 content: Text(
                                   'Are you sure you want to remove ${ytList[index].name}?',
                                 ),
                                 actions: <Widget>[
-                                  Button(
+                                  ElevatedButton(
                                     onPressed: () {
                                       context.pop();
                                     },
                                     child: const Text('Cancel'),
                                   ),
-                                  Button(
+                                  ElevatedButton(
                                     onPressed: () async {
                                       await ref
                                           .read(youTubeListProvider.notifier)
@@ -86,7 +84,7 @@ class ManageChannels extends HookConsumerWidget {
                                     },
                                     style: ButtonStyle(
                                       backgroundColor:
-                                          ButtonState.all(Colors.red),
+                                          WidgetStateProperty.all(Colors.red),
                                     ),
                                     child: const Text('Remove'),
                                   ),
@@ -102,8 +100,9 @@ class ManageChannels extends HookConsumerWidget {
                         }
                       },
                       child: Card(
-                        borderRadius: BorderRadius.circular(12.0),
-                        padding: const EdgeInsets.all(8.0),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(12.0),
+                        ),
                         child: ListTile(
                           title: Text(
                             ytList[index].name,

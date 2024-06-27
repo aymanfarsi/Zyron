@@ -1,6 +1,7 @@
 import 'dart:io';
 
-import 'package:fluent_ui/fluent_ui.dart';
+import 'package:catppuccin_flutter/catppuccin_flutter.dart';
+import 'package:flutter/material.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:launch_at_startup/launch_at_startup.dart';
 import 'package:package_info_plus/package_info_plus.dart';
@@ -10,34 +11,13 @@ import 'package:windows_taskbar/windows_taskbar.dart';
 import 'package:zyron/apps/error_app.dart';
 import 'package:zyron/providers/app_settings_provider.dart';
 import 'package:zyron/src/rust/frb_generated.dart';
+import 'package:zyron/src/utils.dart';
 import 'package:zyron/src/variables.dart';
 
 Future<void> main() async {
   // ! Ensure that Flutter and Rust are initialized
   WidgetsFlutterBinding.ensureInitialized();
   await RustLib.init();
-
-  // ! Load environment variables
-  // await dotenv.load();
-  // twitchClientId = dotenv.env['TWITCH_CLIENT_ID']!;
-  // twitchClient = TwitchClient(
-  //   clientId: twitchClientId,
-  //   redirectUri: redirectUri,
-  // );
-
-  // ! Register app links
-  // await register('zyron');
-  // final appLinks = AppLinks();
-  // appLinks.allUriLinkStream.listen((Uri uri) {
-  //   debugPrint('Received uri: $uri');
-  //   try {
-  //     twitchClient.initializeToken(
-  //       TwitchToken.fromUrl(uri.toString()),
-  //     );
-  //   } catch (e) {
-  //     debugPrint('Register app links Error: $e');
-  //   }
-  // });
 
   // ! Setup launch at startup
   PackageInfo packageInfo = await PackageInfo.fromPlatform();
@@ -51,7 +31,9 @@ Future<void> main() async {
     Platform.isWindows ? 'assets/zyron_icon.ico' : 'assets/zyron_icon.png',
     iconPosition: TrayIconPositon.left,
   );
-  await trayManager.setToolTip('Zyron System Tray');
+  if (Platform.isWindows) {
+    await trayManager.setToolTip('Zyron System Tray');
+  }
   Menu menu = Menu(
     items: [
       MenuItem(
@@ -125,26 +107,28 @@ Future<void> main() async {
     await windowManager.focus();
 
     // ! Initialize the Windows Taskbar
-    try {
-      await WindowsTaskbar.setThumbnailTooltip('Zyron');
-      await WindowsTaskbar.resetThumbnailToolbar();
-      await WindowsTaskbar.setThumbnailToolbar(
-        [
-          ThumbnailToolbarButton(
-            ThumbnailToolbarAssetIcon('assets/zyron_icon.ico'),
-            'App Icon',
-            () async {
-              debugPrint('ThumbnailToolbarButton clicked');
-            },
-            // mode: ThumbnailToolbarButtonMode.noBackground,
-          ),
-        ],
-      );
-    } catch (e) {
-      if (!Platform.isWindows) {
-        debugPrint('Unsupported taskbar for ${Platform.operatingSystem}');
-      } else {
-        debugPrint('Initialize the Windows Taskbar Error: $e');
+    if (Platform.isWindows) {
+      try {
+        await WindowsTaskbar.setThumbnailTooltip('Zyron');
+        await WindowsTaskbar.resetThumbnailToolbar();
+        await WindowsTaskbar.setThumbnailToolbar(
+          [
+            ThumbnailToolbarButton(
+              ThumbnailToolbarAssetIcon('assets/zyron_icon.ico'),
+              'App Icon',
+              () async {
+                debugPrint('ThumbnailToolbarButton clicked');
+              },
+              // mode: ThumbnailToolbarButtonMode.noBackground,
+            ),
+          ],
+        );
+      } catch (e) {
+        if (!Platform.isWindows) {
+          debugPrint('Unsupported taskbar for ${Platform.operatingSystem}');
+        } else {
+          debugPrint('Initialize the Windows Taskbar Error: $e');
+        }
       }
     }
   });
@@ -177,17 +161,11 @@ class ZyronApp extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final appSettings = ref.watch(appSettingsProvider);
 
-    return FluentApp.router(
+    return MaterialApp.router(
       title: 'Zyron',
       debugShowCheckedModeBanner: false,
-      theme: FluentThemeData.light().copyWith(
-        animationCurve: Curves.easeInOutCirc,
-      ),
-      darkTheme: FluentThemeData.dark().copyWith(
-        animationCurve: Curves.easeInOutCirc,
-      ),
-      // theme: catppuccinTheme(catppuccin.latte),
-      // darkTheme: catppuccinTheme(catppuccin.macchiato),
+      theme: catppuccinTheme(catppuccin.latte),
+      darkTheme: catppuccinTheme(catppuccin.macchiato),
       themeMode: appSettings.isDarkMode ? ThemeMode.dark : ThemeMode.light,
       routerConfig: router,
       localizationsDelegates: const [
@@ -197,7 +175,7 @@ class ZyronApp extends ConsumerWidget {
       locale: const Locale('en', 'US'),
       supportedLocales: const [Locale('en', 'US')],
       onGenerateTitle: (context) => 'Zyron',
-      scrollBehavior: const FluentScrollBehavior(),
+      scrollBehavior: const ScrollBehavior(),
       actions: <Type, Action<Intent>>{
         ...WidgetsApp.defaultActions,
         ActivateAction: CallbackAction(

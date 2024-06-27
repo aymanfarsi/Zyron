@@ -1,5 +1,4 @@
-import 'package:fluent_ui/fluent_ui.dart' hide ListTile, Card, Colors;
-import 'package:flutter/material.dart' hide ButtonStyle, Divider, Tooltip;
+import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:gap/gap.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
@@ -29,7 +28,8 @@ class ListChannels extends HookConsumerWidget {
     return Row(
       mainAxisAlignment: MainAxisAlignment.start,
       children: [
-        SizedBox(
+        Container(
+          padding: const EdgeInsets.only(top: 8.0),
           width: 175.0,
           child: ScrollConfiguration(
             behavior: ScrollConfiguration.of(context).copyWith(
@@ -55,14 +55,14 @@ class ListChannels extends HookConsumerWidget {
                         return SizedBox(
                           height: 50.0,
                           child: Center(
-                            child: Button(
+                            child: ElevatedButton(
                               style: ButtonStyle(
-                                backgroundColor: ButtonState.all(
+                                backgroundColor: WidgetStateProperty.all(
                                   selectedIndex.value == -1
                                       ? Colors.amber.withOpacity(0.2)
                                       : Colors.transparent,
                                 ),
-                                elevation: ButtonState.all(2.0),
+                                elevation: WidgetStateProperty.all(2.0),
                               ),
                               onPressed: () async {
                                 selectedVideo.value = null;
@@ -144,7 +144,8 @@ class ListChannels extends HookConsumerWidget {
           ),
         ),
         const Gap(9.0),
-        SizedBox(
+        Container(
+          padding: const EdgeInsets.only(top: 8.0),
           width: MediaQuery.of(context).size.width - 261.0,
           height: MediaQuery.of(context).size.height - 129.0,
           child: Column(
@@ -152,11 +153,23 @@ class ListChannels extends HookConsumerWidget {
             children: [
               Container(
                 height: MediaQuery.of(context).size.height -
-                    (selectedVideo.value == null ? 129.0 : 259.0),
+                    (selectedVideo.value == null ? 179.0 : 309.0),
                 padding: const EdgeInsets.all(8.0),
                 decoration: boxDecoration,
                 child: videoList.when(
                   data: (videos) {
+                    if (videos.isEmpty) {
+                      return const Center(
+                        child: Text(
+                          'No videos',
+                          style: TextStyle(
+                            fontWeight: FontWeight.normal,
+                            fontSize: 14.0,
+                          ),
+                        ),
+                      );
+                    }
+
                     List<Widget> videoWidgets = [];
                     for (int index = 0; index < videos.length; index++) {
                       if (index % FETCH_ALL_VIDEOS_LIMIT == 0 &&
@@ -295,7 +308,7 @@ class ListChannels extends HookConsumerWidget {
                       Row(
                         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                         children: [
-                          Button(
+                          ElevatedButton(
                             child: const Text(
                               'Close',
                             ),
@@ -303,7 +316,7 @@ class ListChannels extends HookConsumerWidget {
                               selectedVideo.value = null;
                             },
                           ),
-                          Button(
+                          ElevatedButton(
                             child: const Text(
                               'Copy Link',
                             ),
@@ -329,7 +342,7 @@ class ListChannels extends HookConsumerWidget {
                                     fit: BoxFit.fitWidth,
                                   ),
                           ),
-                          Button(
+                          ElevatedButton(
                             child: const Text(
                               'Watch',
                             ),

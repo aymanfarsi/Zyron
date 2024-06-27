@@ -1,5 +1,4 @@
-import 'package:fluent_ui/fluent_ui.dart' hide ListTile, Card, Colors;
-import 'package:flutter/material.dart' hide ButtonStyle, Divider, Tooltip;
+import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:gap/gap.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
@@ -130,7 +129,7 @@ class ListStreamers extends HookConsumerWidget {
                 ),
               const Gap(9.0),
               if (selectedIndex.value != null)
-                Button(
+                ElevatedButton(
                   onPressed: () async {
                     await watchStream(
                       liveStreamers[selectedIndex.value!],

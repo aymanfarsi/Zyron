@@ -1,6 +1,5 @@
-import 'package:catppuccin_flutter/catppuccin_flutter.dart';
-import 'package:fluent_ui/fluent_ui.dart';
 import 'package:flutter/material.dart';
+import 'package:catppuccin_flutter/catppuccin_flutter.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:zyron/src/utils.dart';
 
@@ -24,7 +23,7 @@ class ErrorApp extends ConsumerWidget {
       locale: const Locale('en', 'US'),
       supportedLocales: const [Locale('en', 'US')],
       onGenerateTitle: (context) => 'Zyron',
-      scrollBehavior: const NavigationViewScrollBehavior(),
+      scrollBehavior: const ScrollBehavior(),
       actions: <Type, Action<Intent>>{
         ...WidgetsApp.defaultActions,
         ActivateAction: CallbackAction(

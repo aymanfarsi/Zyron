@@ -1,5 +1,4 @@
-import 'package:fluent_ui/fluent_ui.dart';
-import 'package:flutter/material.dart' show Scaffold, CircularProgressIndicator;
+import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:launch_at_startup/launch_at_startup.dart';
@@ -100,7 +99,7 @@ class AppFrameState extends ConsumerState<AppFrame>
           );
         }
         if (snapshot.hasData && snapshot.data == false) {
-          return  Scaffold(
+          return Scaffold(
             body: Center(
               child: Text('Error initializing app settings: ${snapshot.error}'),
             ),
@@ -154,22 +153,22 @@ class AppFrameState extends ConsumerState<AppFrame>
     await showDialog(
       context: context,
       builder: (context) {
-        return ContentDialog(
+        return AlertDialog(
           title: const Text('Close Window'),
           content: const Text('Are you sure you want to close the window?'),
           actions: <Widget>[
-            Button(
+            ElevatedButton(
               onPressed: () {
                 context.pop();
               },
               child: const Text('Cancel'),
             ),
-            Button(
+            ElevatedButton(
               onPressed: () async {
                 await windowManager.destroy();
               },
               style: ButtonStyle(
-                backgroundColor: ButtonState.all(Colors.red),
+                backgroundColor: WidgetStateProperty.all(Colors.red),
               ),
               child: const Text('Close'),
             ),
