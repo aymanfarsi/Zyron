@@ -64,6 +64,14 @@ flutter run
 
 Add the `--release` flag to run the application in release mode.
 
+6. You can also run script for building and bundling the app:
+
+- `./generate_files` to generate the boilerplate code for the Flutter Rust bridge and Freezed classes.
+- `./build_app` to build the app for your current platform.
+- `./distribute_app` to build and distribute the app for all platforms.
+
+Add `sh` before the script name if you are using Windows.
+
 ## Contributing
 
 Contributions are welcome! Feel free to open an issue or submit a pull request if you have any ideas, bug reports, or feature requests.
