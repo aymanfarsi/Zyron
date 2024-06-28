@@ -16,7 +16,8 @@ class ListStreamers extends HookConsumerWidget {
 
     final selectedIndex = useState<int?>(null);
     final twitchList = ref.watch(twitchListProvider);
-    final liveStreamers = twitchList.where((t) => t.isLive).toList();
+    final streamers =
+        twitchList.where((t) => t.isLive || t.url!.contains('kick')).toList();
 
     return Row(
       mainAxisAlignment: MainAxisAlignment.start,
@@ -28,7 +29,7 @@ class ListStreamers extends HookConsumerWidget {
               scrollbars: false,
               physics: const BouncingScrollPhysics(),
             ),
-            child: liveStreamers.isEmpty
+            child: streamers.isEmpty
                 ? const Center(
                     child: Text(
                       'No live streamers',
@@ -40,7 +41,7 @@ class ListStreamers extends HookConsumerWidget {
                   )
                 : ListView.builder(
                     shrinkWrap: false,
-                    itemCount: liveStreamers.length,
+                    itemCount: streamers.length,
                     scrollDirection: Axis.vertical,
                     itemBuilder: (context, index) {
                       return MouseRegion(
@@ -63,7 +64,7 @@ class ListStreamers extends HookConsumerWidget {
                             contentPadding:
                                 const EdgeInsets.symmetric(horizontal: 8.0),
                             title: Text(
-                              liveStreamers[index].displayName,
+                              streamers[index].displayName,
                               style: const TextStyle(
                                 fontWeight: FontWeight.bold,
                                 fontSize: 14.0,
@@ -72,14 +73,14 @@ class ListStreamers extends HookConsumerWidget {
                               maxLines: 1,
                             ),
                             subtitle: Text(
-                              liveStreamers[index].username,
+                              streamers[index].username,
                               style: const TextStyle(
                                 fontSize: 12.0,
                               ),
                             ),
                             leading: CircleAvatar(
                               backgroundImage: NetworkImage(
-                                liveStreamers[index].profileImageUrl,
+                                streamers[index].profileImageUrl,
                               ),
                             ),
                             onTap: () async {
@@ -104,7 +105,7 @@ class ListStreamers extends HookConsumerWidget {
               Text(
                 selectedIndex.value == null
                     ? 'Select a streamer'
-                    : liveStreamers[selectedIndex.value!].description,
+                    : streamers[selectedIndex.value!].description,
                 style: const TextStyle(
                   fontWeight: FontWeight.normal,
                   fontSize: 14.0,
@@ -123,7 +124,7 @@ class ListStreamers extends HookConsumerWidget {
                     ),
                   ),
                   child: Image.network(
-                    liveStreamers[selectedIndex.value!].profileImageUrl,
+                    streamers[selectedIndex.value!].profileImageUrl,
                     fit: BoxFit.cover,
                   ),
                 ),
@@ -132,7 +133,7 @@ class ListStreamers extends HookConsumerWidget {
                 ElevatedButton(
                   onPressed: () async {
                     await watchStream(
-                      liveStreamers[selectedIndex.value!],
+                      streamers[selectedIndex.value!],
                       appSettings.playerSettings,
                     );
                   },

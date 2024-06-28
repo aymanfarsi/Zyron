@@ -1,7 +1,7 @@
 // ignore_for_file: use_build_context_synchronously
 
-import 'package:flutter/material.dart';
 import 'package:desktop_context_menu/desktop_context_menu.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:go_router/go_router.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
@@ -223,10 +223,14 @@ class ManageStreamers extends HookConsumerWidget {
                         onPressed: () async {
                           final text = input.text;
                           if (text.isEmpty) return;
-                          final username = text.split('/').last;
+
+                          String username = text.split('/').last;
+                          if (text.contains('kick')) username = text;
+
                           final streamer = await ref
                               .read(twitchListProvider.notifier)
                               .fetchStreamer(username: username);
+
                           if (streamer == null) {
                             await showDialog(
                               context: context,
@@ -250,6 +254,7 @@ class ManageStreamers extends HookConsumerWidget {
                           await ref
                               .read(twitchListProvider.notifier)
                               .addStreamer(streamer);
+                              
                           input.clear();
                           context.pop();
                         },

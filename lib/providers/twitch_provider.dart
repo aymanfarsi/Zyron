@@ -19,6 +19,17 @@ class TwitchList extends _$TwitchList {
   }
 
   Future<TwitchStreamerModel?> fetchStreamer({required String username}) async {
+    if (username.contains('kick')) {
+      final kickUrl = username;
+      return TwitchStreamerModel(
+        username: username.split('/').last,
+        displayName: username.split('/').last,
+        description: username.split('/').last,
+        profileImageUrl: '',
+        isLive: true,
+        url: kickUrl,
+      );
+    }
     final response = await http.get(
       Uri.parse('https://www.twitch.tv/$username'),
     );
@@ -54,6 +65,7 @@ class TwitchList extends _$TwitchList {
       description: description,
       profileImageUrl: profileImageUrl,
       isLive: isLive,
+      url: 'https://www.twitch.tv/$username',
     );
   }
 
@@ -125,7 +137,7 @@ class TwitchList extends _$TwitchList {
   void decodeStreamers(String json) {
     final List<dynamic> decodedJson = jsonDecode(json);
     state = decodedJson.map((c) => TwitchStreamerModel.fromJson(c)).toList();
-    //
+
     debugPrint('${state.length} Streamer(s) loaded');
   }
 

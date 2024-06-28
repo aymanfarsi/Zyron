@@ -11,6 +11,7 @@ class TwitchStreamerModel with _$TwitchStreamerModel {
     required String description,
     required String profileImageUrl,
     required bool isLive,
+    required String? url,
   }) = _TwitchStreamerModel;
 
   factory TwitchStreamerModel.fromJson(Map<String, dynamic> json) =>

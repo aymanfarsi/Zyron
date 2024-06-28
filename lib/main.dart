@@ -1,6 +1,5 @@
 import 'dart:io';
 
-import 'package:catppuccin_flutter/catppuccin_flutter.dart';
 import 'package:flutter/material.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:launch_at_startup/launch_at_startup.dart';
@@ -11,7 +10,6 @@ import 'package:windows_taskbar/windows_taskbar.dart';
 import 'package:zyron/apps/error_app.dart';
 import 'package:zyron/providers/app_settings_provider.dart';
 import 'package:zyron/src/rust/frb_generated.dart';
-import 'package:zyron/src/utils.dart';
 import 'package:zyron/src/variables.dart';
 
 Future<void> main() async {
@@ -164,8 +162,10 @@ class ZyronApp extends ConsumerWidget {
     return MaterialApp.router(
       title: 'Zyron',
       debugShowCheckedModeBanner: false,
-      theme: catppuccinTheme(catppuccin.latte),
-      darkTheme: catppuccinTheme(catppuccin.macchiato),
+      // theme: catppuccinTheme(catppuccin.latte),
+      // darkTheme: catppuccinTheme(catppuccin.macchiato),
+      theme: ThemeData.light(),
+      darkTheme: ThemeData.dark(),
       themeMode: appSettings.isDarkMode ? ThemeMode.dark : ThemeMode.light,
       routerConfig: router,
       localizationsDelegates: const [

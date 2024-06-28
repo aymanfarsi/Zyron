@@ -16,6 +16,13 @@ Future<void> watchStream(
   TwitchStreamerModel streamer,
   PlayerSettingsModel player,
 ) async {
+  String url = '';
+  if (streamer.url == null || streamer.url!.contains('twitch')) {
+    url = 'https://www.twitch.tv/${streamer.username}';
+  } else if (streamer.url!.contains('youtube')) {
+    url = streamer.url!;
+  }
+
   await Process.run(player.mpvExe, [
     // '--no-terminal',
     if (player.exitOnDone) '--keep-open=yes',
@@ -31,7 +38,7 @@ Future<void> watchStream(
     // '--no-border',
     // '--no-input-default-bindings',
     // '--input-ipc-server=${player.mpvSocket}',
-    'https://www.twitch.tv/${streamer.username}',
+    url,
   ]);
 }
 
