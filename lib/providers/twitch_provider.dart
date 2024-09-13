@@ -20,39 +20,6 @@ class TwitchList extends _$TwitchList {
 
   Future<TwitchStreamerModel?> fetchStreamer({required String username}) async {
     try {
-      final kickUsername = username.split('/').last;
-      final kickUrl =
-          'https://kick.com/api/v2/channels/$kickUsername/livestream';
-      final response = await http.get(Uri.parse(kickUrl));
-      if (response.statusCode != 200) {
-        throw Exception('Failed to fetch streamer');
-      }
-
-      final data = jsonDecode(response.body)['data'];
-      if (data == null) {
-        return TwitchStreamerModel(
-          username: kickUsername,
-          displayName: kickUsername,
-          description: 'No data',
-          profileImageUrl: '',
-          isLive: false,
-          url: null,
-        );
-      }
-
-      final sessionTitle = data['session_title'];
-      final playbackUrl = data['playback_url'];
-      final thumbnailSrc = data['thumbnail']['src'];
-
-      return TwitchStreamerModel(
-        username: username.split('/').last,
-        displayName: kickUsername,
-        description: sessionTitle,
-        profileImageUrl: thumbnailSrc,
-        isLive: playbackUrl != null && playbackUrl.isNotEmpty,
-        url: playbackUrl,
-      );
-    } on Exception {
       final response = await http.get(
         Uri.parse('https://www.twitch.tv/$username'),
       );
@@ -102,6 +69,39 @@ class TwitchList extends _$TwitchList {
         profileImageUrl: profileImageUrl,
         isLive: isLive,
         url: 'https://www.twitch.tv/$username',
+      );
+    } catch (e) {
+      final kickUsername = username.split('/').last;
+      final kickUrl =
+          'https://kick.com/api/v2/channels/$kickUsername/livestream';
+      final response = await http.get(Uri.parse(kickUrl));
+      if (response.statusCode != 200) {
+        throw Exception('Failed to fetch streamer');
+      }
+
+      final data = jsonDecode(response.body)['data'];
+      if (data == null) {
+        return TwitchStreamerModel(
+          username: kickUsername,
+          displayName: kickUsername,
+          description: 'No data',
+          profileImageUrl: '',
+          isLive: false,
+          url: null,
+        );
+      }
+
+      final sessionTitle = data['session_title'];
+      final playbackUrl = data['playback_url'];
+      final thumbnailSrc = data['thumbnail']['src'];
+
+      return TwitchStreamerModel(
+        username: username.split('/').last,
+        displayName: kickUsername,
+        description: sessionTitle,
+        profileImageUrl: thumbnailSrc,
+        isLive: playbackUrl != null && playbackUrl.isNotEmpty,
+        url: playbackUrl,
       );
     }
   }
