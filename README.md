@@ -30,7 +30,7 @@ To use Zyron, you can run the installer or build the application from source.
 
 ## Building from source
 
-To install build Zyron from source, you need to have Flutter installed on your system. You can follow the instructions on the [official Flutter website](https://flutter.dev/docs/get-started/install) to install it.
+To install build Zyron from source, you need to have Flutter installed on your system. You can follow the instructions on the [official Flutter website](https://flutter.dev/docs/get-started/install) to install it. Also, you need to have [mpv](https://mpv.io/) installed.
 
 1. Clone the repository:
 
@@ -89,6 +89,7 @@ Zyron is built using the following technologies:
 - [Flutter](https://flutter.dev/)
 - [Dart](https://dart.dev/)
 - [flutter_rust_bridge](https://cjycode.com/flutter_rust_bridge/)
+- [mpv](https://mpv.io/)
 
 ## License
 
