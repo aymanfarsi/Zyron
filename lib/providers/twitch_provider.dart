@@ -19,54 +19,91 @@ class TwitchList extends _$TwitchList {
   }
 
   Future<TwitchStreamerModel?> fetchStreamer({required String username}) async {
-    if (username.contains('kick')) {
-      final kickUrl = username;
+    try {
+      final kickUsername = username.split('/').last;
+      final kickUrl =
+          'https://kick.com/api/v2/channels/$kickUsername/livestream';
+      final response = await http.get(Uri.parse(kickUrl));
+      if (response.statusCode != 200) {
+        throw Exception('Failed to fetch streamer');
+      }
+
+      final data = jsonDecode(response.body)['data'];
+      if (data == null) {
+        return TwitchStreamerModel(
+          username: kickUsername,
+          displayName: kickUsername,
+          description: 'No data',
+          profileImageUrl: '',
+          isLive: false,
+          url: null,
+        );
+      }
+
+      final sessionTitle = data['session_title'];
+      final playbackUrl = data['playback_url'];
+      final thumbnailSrc = data['thumbnail']['src'];
+
       return TwitchStreamerModel(
         username: username.split('/').last,
-        displayName: username.split('/').last,
-        description: username.split('/').last,
-        profileImageUrl: '',
-        isLive: true,
-        url: kickUrl,
+        displayName: kickUsername,
+        description: sessionTitle,
+        profileImageUrl: thumbnailSrc,
+        isLive: playbackUrl != null && playbackUrl.isNotEmpty,
+        url: playbackUrl,
+      );
+    } on Exception {
+      final response = await http.get(
+        Uri.parse('https://www.twitch.tv/$username'),
+      );
+      if (response.statusCode != 200) {
+        return null;
+      }
+      final body = response.body;
+      final document = Document.html(body);
+      final scriptTag =
+          document.querySelectorAll('script[type="application/ld+json"]');
+      bool isLive = false;
+      String profileImageUrl = '';
+      String description = '';
+      String displayName = username;
+      try {
+        final script = scriptTag.first.text;
+        final json = jsonDecode(script);
+        final dict = json['@graph'].first;
+        try {
+          isLive = dict['publication']['isLiveBroadcast'] ?? false;
+        } catch (e) {
+          debugPrint('Error: $e');
+        }
+        try {
+          profileImageUrl = dict['thumbnailUrl'].last ?? '';
+        } catch (e) {
+          debugPrint('Error: $e');
+        }
+        try {
+          description =
+              const Utf8Decoder().convert(dict['description'].codeUnits);
+        } catch (e) {
+          debugPrint('Error: $e');
+        }
+        try {
+          displayName = dict['name'].split(' ').first ?? username;
+        } catch (e) {
+          debugPrint('Error: $e');
+        }
+      } catch (e) {
+        debugPrint('Error: $e');
+      }
+      return TwitchStreamerModel(
+        username: username,
+        displayName: displayName,
+        description: description,
+        profileImageUrl: profileImageUrl,
+        isLive: isLive,
+        url: 'https://www.twitch.tv/$username',
       );
     }
-    final response = await http.get(
-      Uri.parse('https://www.twitch.tv/$username'),
-    );
-    if (response.statusCode != 200) {
-      return null;
-    }
-    final body = response.body;
-    final document = Document.html(body);
-    final scriptTag =
-        document.querySelectorAll('script[type="application/ld+json"]');
-    bool isLive;
-    String profileImageUrl;
-    String description;
-    String displayName;
-    try {
-      final script = scriptTag.first.text;
-      final json = jsonDecode(script);
-      final dict = json['@graph'].first;
-      isLive = dict['publication']['isLiveBroadcast'] ?? false;
-      profileImageUrl = dict['thumbnailUrl'].last ?? '';
-      description = dict['description'] ?? '';
-      displayName = dict['name'].split(' ').first ?? username;
-    } catch (e) {
-      isLive = false;
-      profileImageUrl = '';
-      description = '';
-      displayName = username;
-      // debugPrint('Error: $e');
-    }
-    return TwitchStreamerModel(
-      username: username,
-      displayName: displayName,
-      description: description,
-      profileImageUrl: profileImageUrl,
-      isLive: isLive,
-      url: 'https://www.twitch.tv/$username',
-    );
   }
 
   Future<void> refreshStreamers() async {

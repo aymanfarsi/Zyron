@@ -16,8 +16,7 @@ class ListStreamers extends HookConsumerWidget {
 
     final selectedIndex = useState<int?>(null);
     final twitchList = ref.watch(twitchListProvider);
-    final streamers =
-        twitchList.where((t) => t.isLive || t.url!.contains('kick')).toList();
+    final streamers = twitchList.where((t) => t.isLive).toList();
 
     return Row(
       mainAxisAlignment: MainAxisAlignment.start,
@@ -130,14 +129,29 @@ class ListStreamers extends HookConsumerWidget {
                 ),
               const Gap(9.0),
               if (selectedIndex.value != null)
-                ElevatedButton(
-                  onPressed: () async {
-                    await watchStream(
-                      streamers[selectedIndex.value!],
-                      appSettings.playerSettings,
-                    );
-                  },
-                  child: const Text('Watch Stream'),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: [
+                    ElevatedButton(
+                      onPressed: () async {
+                        await copyToClipboard(
+                          streamers[selectedIndex.value!].url!,
+                        );
+                      },
+                      child: const Text('Copy url'),
+                    ),
+                    const Gap(20),
+                    ElevatedButton(
+                      onPressed: () async {
+                        await watchStream(
+                          streamers[selectedIndex.value!],
+                          appSettings.playerSettings,
+                        );
+                      },
+                      child: const Text('Watch Stream'),
+                    ),
+                  ],
                 ),
             ],
           ),

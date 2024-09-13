@@ -1,7 +1,7 @@
-app_id: io.github.aymanfarsi.driveaf
+app_id: io.github.aymanfarsi.zyron
 publisher: AymanFarsi
 publisher_url: https://www.github.com/aymanfarsi
-display_name: DriveAF
+display_name: Zyron
 create_desktop_icon: true
 locales:
   - en

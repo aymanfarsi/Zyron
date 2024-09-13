@@ -1,0 +1,29 @@
+#!/bin/bash
+
+desktop_file=$(cat << EOM
+[Desktop Entry]
+Type=Application
+Name=Zyron
+Comment=Zyron
+Exec=$PWD/build/linux/x64/release/bundle/zyron
+Icon=$HOME/.local/share/icons/zyron_icon.png
+Terminal=false
+Categories=Utility;Application;Entertainment;
+EOM
+)
+
+if [[ $(uname -s) == *NT* ]]; then
+    echo "Building for Windows"
+    flutter build windows
+elif [[ $(uname -s) == *Darwin* ]]; then
+    echo "Building for MacOS"
+    flutter build macos
+else
+    echo "Building for Linux"
+    flutter build linux
+    chmod +x build/linux/x64/release/bundle/zyron
+    echo "$desktop_file" > $HOME/.local/share/applications/zyron_icon.desktop
+    cp assets/zyron_icon.png $HOME/.local/share/icons/zyron_icon.png
+fi
+
+echo "Zyron built successfully"

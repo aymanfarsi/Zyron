@@ -105,7 +105,7 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
 
   TaskConstMeta get kCrateApiFootballScrapeLiveScoreConstMeta =>
       const TaskConstMeta(
-        debugName: "scrape_live_score",
+        debugName: 'scrape_live_score',
         argNames: [],
       );
 
@@ -128,8 +128,8 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
   }
 
   TaskConstMeta get kCrateApiSimpleGreetConstMeta => const TaskConstMeta(
-        debugName: "greet",
-        argNames: ["name"],
+        debugName: 'greet',
+        argNames: ['name'],
       );
 
   @override
@@ -151,7 +151,7 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
   }
 
   TaskConstMeta get kCrateApiSimpleInitAppConstMeta => const TaskConstMeta(
-        debugName: "init_app",
+        debugName: 'init_app',
         argNames: [],
       );
 

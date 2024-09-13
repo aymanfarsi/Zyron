@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:gap/gap.dart';
 import 'package:go_router/go_router.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:launch_at_startup/launch_at_startup.dart';
@@ -91,9 +92,20 @@ class AppFrameState extends ConsumerState<AppFrame>
         if (snapshot.hasError) {
           return Scaffold(
             body: Center(
-              child: Text(
-                'Error: ${snapshot.error}',
-                textAlign: TextAlign.justify,
+              child: Column(
+                children: [
+                  Text(
+                    'Error: ${snapshot.error}',
+                    textAlign: TextAlign.justify,
+                  ),
+                  const Gap(20),
+                  ElevatedButton(
+                    onPressed: () {
+                      setState(() {});
+                    },
+                    child: const Text('Retry'),
+                  ),
+                ],
               ),
             ),
           );
