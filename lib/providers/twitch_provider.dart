@@ -18,8 +18,8 @@ class TwitchList extends _$TwitchList {
     return [];
   }
 
-  Future<TwitchStreamerModel?> fetchStreamer({required String username}) async {
-    try {
+  Future<TwitchStreamerModel?> fetchStreamer({required String username, required bool tryKick}) async {
+    if (!tryKick) {
       final response = await http.get(
         Uri.parse('https://www.twitch.tv/$username'),
       );
@@ -28,8 +28,7 @@ class TwitchList extends _$TwitchList {
       }
       final body = response.body;
       final document = Document.html(body);
-      final scriptTag =
-          document.querySelectorAll('script[type="application/ld+json"]');
+      final scriptTag = document.querySelectorAll('script[type="application/ld+json"]');
       bool isLive = false;
       String profileImageUrl = '';
       String description = '';
@@ -49,8 +48,7 @@ class TwitchList extends _$TwitchList {
           debugPrint('Error: $e');
         }
         try {
-          description =
-              const Utf8Decoder().convert(dict['description'].codeUnits);
+          description = const Utf8Decoder().convert(dict['description'].codeUnits);
         } catch (e) {
           debugPrint('Error: $e');
         }
@@ -70,13 +68,19 @@ class TwitchList extends _$TwitchList {
         isLive: isLive,
         url: 'https://www.twitch.tv/$username',
       );
-    } catch (e) {
+    } else {
       final kickUsername = username.split('/').last;
-      final kickUrl =
-          'https://kick.com/api/v2/channels/$kickUsername/livestream';
+      final kickUrl = 'https://kick.com/api/v2/channels/$kickUsername/livestream';
       final response = await http.get(Uri.parse(kickUrl));
       if (response.statusCode != 200) {
-        throw Exception('Failed to fetch streamer');
+        return TwitchStreamerModel(
+          username: kickUsername,
+          displayName: kickUsername,
+          description: 'No data',
+          profileImageUrl: '',
+          isLive: false,
+          url: null,
+        );
       }
 
       final data = jsonDecode(response.body)['data'];
@@ -108,12 +112,19 @@ class TwitchList extends _$TwitchList {
 
   Future<void> refreshStreamers() async {
     final List<TwitchStreamerModel> streamers = state;
-    final List<Future<TwitchStreamerModel?>> futures = streamers
-        .map((streamer) => fetchStreamer(username: streamer.username))
-        .toList();
-    final List<TwitchStreamerModel?> updatedStreamers =
-        await Future.wait(futures);
-    state = updatedStreamers.whereType<TwitchStreamerModel>().toList();
+    final List<Future<TwitchStreamerModel?>> futures1 = streamers.map((streamer) => fetchStreamer(username: streamer.username, tryKick: false)).toList();
+    final List<Future<TwitchStreamerModel?>> futures2 = streamers.map((streamer) => fetchStreamer(username: streamer.username, tryKick: true)).toList();
+    final List<TwitchStreamerModel?> updatedStreamers = await Future.wait([...futures1, ...futures2]);
+    state = updatedStreamers
+      .whereType<TwitchStreamerModel>()
+      .toSet()
+      .toList()
+      .fold<Map<String, TwitchStreamerModel>>({}, (map, streamer) {
+        map[streamer.url ?? streamer.username] = streamer;
+        return map;
+      })
+      .values
+      .toList();
     debugPrint('Streamers refreshed');
     await saveStreamers();
   }
@@ -158,8 +169,9 @@ class TwitchList extends _$TwitchList {
   }
 
   Future<void> refreshStreamer(TwitchStreamerModel streamer) async {
-    final c = await fetchStreamer(username: streamer.username);
-    final updatedStreamer = c ?? streamer;
+    final c1 = await fetchStreamer(username: streamer.username, tryKick: false);
+    final c2 = await fetchStreamer(username: streamer.username, tryKick: true);
+    final updatedStreamer = c1 ?? c2 ?? streamer;
     final index = state.indexWhere((s) => s.username == streamer.username);
     state[index] = updatedStreamer;
 

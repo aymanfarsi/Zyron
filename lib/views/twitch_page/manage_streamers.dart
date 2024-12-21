@@ -84,15 +84,11 @@ class ManageStreamers extends HookConsumerWidget {
                                       ),
                                       ElevatedButton(
                                         onPressed: () async {
-                                          await ref
-                                              .read(twitchListProvider.notifier)
-                                              .removeStreamer(
-                                                  twitchList[index]);
+                                          await ref.read(twitchListProvider.notifier).removeStreamer(twitchList[index]);
                                           context.pop();
                                         },
                                         style: ButtonStyle(
-                                          backgroundColor:
-                                              WidgetStateProperty.all(
+                                          backgroundColor: WidgetStateProperty.all(
                                             Colors.red,
                                           ),
                                         ),
@@ -104,14 +100,10 @@ class ManageStreamers extends HookConsumerWidget {
                               );
                             }
                             if (item.title == 'Refresh') {
-                              await ref
-                                  .read(twitchListProvider.notifier)
-                                  .refreshStreamer(twitchList[index]);
+                              await ref.read(twitchListProvider.notifier).refreshStreamer(twitchList[index]);
                             }
                             if (item.title == 'Refresh All') {
-                              await ref
-                                  .read(twitchListProvider.notifier)
-                                  .refreshStreamers();
+                              await ref.read(twitchListProvider.notifier).refreshStreamers();
                             }
                           },
                           child: Card(
@@ -180,10 +172,9 @@ class ManageStreamers extends HookConsumerWidget {
                           final text = input.text;
                           if (text.isEmpty) return;
                           final username = text.split('/').last;
-                          final streamer = await ref
-                              .read(twitchListProvider.notifier)
-                              .fetchStreamer(username: username);
-                          if (streamer == null) {
+                          final streamer1 = await ref.read(twitchListProvider.notifier).fetchStreamer(username: username, tryKick: false);
+                          final streamer2 = await ref.read(twitchListProvider.notifier).fetchStreamer(username: username, tryKick: true);
+                          if (streamer1 == null && streamer2 == null) {
                             await showDialog(
                               context: context,
                               builder: (context) {
@@ -203,9 +194,7 @@ class ManageStreamers extends HookConsumerWidget {
                             );
                             return;
                           }
-                          await ref
-                              .read(twitchListProvider.notifier)
-                              .addStreamer(streamer);
+                          await ref.read(twitchListProvider.notifier).addStreamer(streamer1 ?? streamer2!);
                           input.clear();
                           context.pop();
                         },
@@ -227,11 +216,10 @@ class ManageStreamers extends HookConsumerWidget {
                           String username = text.split('/').last;
                           if (text.contains('kick')) username = text;
 
-                          final streamer = await ref
-                              .read(twitchListProvider.notifier)
-                              .fetchStreamer(username: username);
+                          final streamer1 = await ref.read(twitchListProvider.notifier).fetchStreamer(username: username, tryKick: false);
+                          final streamer2 = await ref.read(twitchListProvider.notifier).fetchStreamer(username: username, tryKick: true);
 
-                          if (streamer == null) {
+                          if (streamer1 == null && streamer2 == null) {
                             await showDialog(
                               context: context,
                               builder: (context) {
@@ -251,10 +239,8 @@ class ManageStreamers extends HookConsumerWidget {
                             );
                             return;
                           }
-                          await ref
-                              .read(twitchListProvider.notifier)
-                              .addStreamer(streamer);
-                              
+                          await ref.read(twitchListProvider.notifier).addStreamer(streamer1 ?? streamer2!);
+
                           input.clear();
                           context.pop();
                         },
